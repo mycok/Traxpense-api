@@ -1,2 +1,3 @@
-# mern-skeleton
-A skeleton for creating various MERN applications
+#### mern-skeleton
+
+A skeleton setup for creating MERN applications with typescript
