@@ -1,0 +1,14 @@
+plugins:
+    duplication:
+      enabled: true
+      config:
+        languages:
+          javascript:
+            mass_threshold: 60
+exclude_patterns:
+    - "config/"
+    - "db/"
+    - "dist/"
+    - "**/node_modules/"
+    - "**/*.d.ts"
+    - "**/__tests__/**"
