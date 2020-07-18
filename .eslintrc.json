@@ -43,6 +43,9 @@
     "no-useless-escape": "off",
     "no-underscore-dangle": "off",
     "import/extensions": "off",
-    "import/no-extraneous-dependencies": "off"
+    "import/no-extraneous-dependencies": "off",
+    "class-methods-use-this": "off",
+    "import/first": "off",
+    "no-unused-vars": "off"
   }
 }
