@@ -1,6 +1,7 @@
-import { app } from './server';
+import 'reflect-metadata';
+import { Server } from './app/Server';
+import { MongooseAccess } from './database/Adaptors/MongoAccess';
 
-const PORT = 5000;
-app.listen(PORT, () => {
-  console.log(`*****server listening on ${PORT}*****`);
-});
+MongooseAccess.connect();
+
+export default new Server();

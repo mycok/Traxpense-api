@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const Dotenv = require('dotenv-webpack');
 
 const CURRENT_WORKING_DIR = process.cwd();
 
@@ -12,7 +13,7 @@ const config = {
     path.join(CURRENT_WORKING_DIR, 'client/main.tsx'),
   ],
   output: {
-    path: path.join(CURRENT_WORKING_DIR, 'dist'),
+    path: path.join(CURRENT_WORKING_DIR, 'dist/client'),
     filename: 'bundle.js',
     publicPath: '/dist/',
   },
@@ -34,6 +35,7 @@ const config = {
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
+    new Dotenv(),
   ],
 };
 

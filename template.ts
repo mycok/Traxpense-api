@@ -1,5 +1,5 @@
-export default () => {
-    return `<!doctype html>
+export function template() {
+  return `<!doctype html>
      <html lang="en">
       <head>
        <meta charset="utf-8">
@@ -7,8 +7,8 @@ export default () => {
       </head>
       <body>
        <div id="root"></div>
-       <script type="text/javascript" src="/dist/bundle.js"> 
+       <script type="text/javascript" src="/dist/client/bundle.js"> 
       </script>
       </body>
-     </html>` 
-  }
+     </html>`;
+}

@@ -1,4 +1,5 @@
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
 
 const CURRENT_WORKING_DIR = process.cwd();
 
@@ -7,7 +8,7 @@ const config = {
   mode: 'production',
   entry: path.join(CURRENT_WORKING_DIR, 'client/main.tsx'),
   output: {
-    path: path.join(CURRENT_WORKING_DIR, '/dist'),
+    path: path.join(CURRENT_WORKING_DIR, '/dist/client'),
     filename: 'bundle.js',
     publicPath: '/dist/',
   },
@@ -23,6 +24,7 @@ const config = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.json'],
   },
+  plugins: [new Dotenv()],
 };
 
 module.exports = config;
