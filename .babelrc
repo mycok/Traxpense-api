@@ -5,11 +5,11 @@
                 "targets": { "node": "current" }
             }
         ],
-        "@babel/preset-typescript",
+        ["@babel/preset-typescript", { "onlyRemoveTypeImports": true }],
         "@babel/react"
     ],
     "plugins": [
-        "@babel/plugin-proposal-class-properties",
+        ["@babel/plugin-proposal-class-properties", { "loose" : true }],
         "@babel/proposal-object-rest-spread",
         "react-hot-loader/babel"
     ]
