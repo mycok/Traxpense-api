@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://api.mern-skeleton/server/validation/schemas/user/profile.json",
+  "title": "User Profile Schema",
+  "description": "For validating client-provided user profile object when creating and/or updating a user",
+  "type": "object",
+  "properties": {
+    "bio": { "type": "string", "minLength": 10 },
+    "summary": { "type": "string", "minLength": 10 },
+    "otherNames": {
+      "type": "object",
+      "properties": {
+        "first": { "type": "string", "minLength": 2 },
+        "middle": { "type": "string", "minLength": 2 },
+        "last": { "type": "string", "minLength": 2 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

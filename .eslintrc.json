@@ -26,10 +26,17 @@
   },
   "overrides": [
     {
-      "files": ["__tests__/**/*"],
+      "files": ["__tests__/**/*", "**/?(*.)+(spec|test).[jt]s?(x)"],
       "env": {
         "jest": true
       },
+      "rules": {
+        "func-names": "off",
+        "prefer-arrow-callback": "off"
+      }
+    },
+    {
+      "files": ["server/database/data-abstracts/**/*"],
       "rules": {
         "func-names": "off",
         "prefer-arrow-callback": "off"
@@ -46,6 +53,8 @@
     "import/no-extraneous-dependencies": "off",
     "class-methods-use-this": "off",
     "import/first": "off",
-    "no-unused-vars": "off"
+    "no-unused-vars": "off",
+    "no-restricted-syntax": "off",
+    "no-await-in-loop": "off"
   }
 }

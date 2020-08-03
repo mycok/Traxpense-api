@@ -1,27 +1,24 @@
-import { HttpError } from 'routing-controllers';
-
-export class NotFoundError extends HttpError {
+export class NotFoundError extends Error {
   public operationName: string;
 
-  public errMessage: string;
+  public message: string;
 
   public args: any[];
 
-  constructor(operationName: string, errMessage: string, args: any[] = []) {
-    super(404, errMessage);
+  constructor(operationName: string, message: string, args: any[] = []) {
+    super(message);
     Object.setPrototypeOf(this, NotFoundError.prototype);
     this.operationName = operationName;
-    this.errMessage = errMessage;
+    this.message = message;
     this.args = args;
   }
 
   toJSON() {
     return {
-      thrown: true,
       success: false,
-      status: this.httpCode,
+      status: 404,
       failedOperation: this.operationName,
-      message: this.errMessage,
+      message: this.message,
       args: this.args,
     };
   }

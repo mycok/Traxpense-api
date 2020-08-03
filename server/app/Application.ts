@@ -2,10 +2,8 @@ import path from 'path';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import { useExpressServer, useContainer } from 'routing-controllers';
-import { Container } from 'typedi';
-
-import { RouteControllers } from '../controllers';
+import compression from 'compression';
+import { userRouter } from '../routers/UserRouter';
 import { template } from '../../template';
 
 export class Application {
@@ -14,7 +12,7 @@ export class Application {
   constructor() {
     this.app = express();
     this.middlewareSetup();
-    this.controllerSetup();
+    this.RouterSetup();
     this.app.get('/', (req: express.Request, res: express.Response) => {
       res.status(200).send(template());
     });
@@ -22,6 +20,7 @@ export class Application {
 
   private middlewareSetup() {
     this.app.use(cors());
+    this.app.use(compression());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(helmet());
@@ -29,14 +28,8 @@ export class Application {
     this.app.use('/dist', express.static(path.join(process.cwd(), 'dist')));
   }
 
-  private controllerSetup() {
-    useContainer(Container);
-    useExpressServer(this.app, {
-      controllers: [...RouteControllers],
-      routePrefix: '/api/v1',
-      cors: true,
-      classTransformer: true,
-    });
+  private RouterSetup() {
+    this.app.use(userRouter);
   }
 
   private clientErrorHandler(

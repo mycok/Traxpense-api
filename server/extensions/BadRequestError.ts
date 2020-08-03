@@ -1,36 +1,24 @@
-import { HttpError } from 'routing-controllers';
-
-export class BadRequestError extends HttpError {
+export class BadRequestError extends Error {
   public opertionName: string;
 
-  public errMessage: string;
-
-  public errCount?: number;
+  public message: string;
 
   public args: any[];
 
-  constructor(
-    operationName: string,
-    errMessage: string,
-    errCount?: number,
-    args: any[] = [],
-  ) {
-    super(400, errMessage);
+  constructor(operationName: string, message: string, args: any[] = []) {
+    super(message);
     Object.setPrototypeOf(this, BadRequestError.prototype);
     this.opertionName = operationName;
-    this.errMessage = errMessage;
-    this.errCount = errCount;
+    this.message = message;
     this.args = args;
   }
 
   toJSON() {
     return {
-      thrown: true,
       success: false,
-      status: this.httpCode,
-      errCount: this.errCount,
+      status: 400,
       failedOperation: this.opertionName,
-      message: this.errMessage,
+      message: this.message,
       args: this.args,
     };
   }
