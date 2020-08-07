@@ -1,19 +1,20 @@
 import { IUserDocument } from './IUserDocument';
+import { ResponseModel } from '../../../../utils/ResponseModel';
 // TODO: - extend this class by adding getters for all the user documennt properties
-export class UserResponseModel {
-  private _userResponseModel: IUserDocument;
+export class UserResponseModel implements ResponseModel<IUserDocument> {
+  document: IUserDocument;
 
-  constructor(iUserDocument: IUserDocument) {
-    this._userResponseModel = iUserDocument;
+  constructor(document: IUserDocument) {
+    this.document = document;
   }
 
-  getUserResponseModel() {
+  getResponseModel() {
     return Object.seal({
-      id: this._userResponseModel.id && this._userResponseModel.id.toString(),
-      username: this._userResponseModel.username,
-      email: this._userResponseModel.email,
-      avatar: this._userResponseModel.avatar,
-      profile: this._userResponseModel.profile,
+      id: this.document.id && this.document.id.toString(),
+      username: this.document.username,
+      email: this.document.email,
+      avatar: this.document.avatar,
+      profile: this.document.profile,
     });
   }
 }

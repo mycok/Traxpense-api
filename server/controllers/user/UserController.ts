@@ -9,6 +9,7 @@ import { UserModel } from '../../database/data-abstracts/user/UserModel';
 import { Validator } from '../../validation/validators';
 import { BadRequestError } from '../../extensions/BadRequestError';
 import { NotFoundError } from '../../extensions/NotFoundError';
+import { IUserDocument } from '../../database/data-abstracts/user/IUserDocument';
 
 interface IUserRequest {
   id: string;
@@ -44,6 +45,8 @@ interface IUserResponse {
 }
 
 export class UserController {
+  private static userDataAgent = new UserDataAgent();
+
   static async create(req: Request, res: Response): Promise<any> {
     const { body } = req;
     const validationResults = Validator.validateUser<IUserRequest>(
@@ -59,21 +62,23 @@ export class UserController {
         .json(new BadRequestError('create', validationResults));
     }
 
-    const result = await UserDataAgent.create(body);
+    const result = await UserController.userDataAgent.create(body);
 
-    if (result.id) {
+    if (typeof result !== 'string') {
       return res.status(201).json({
         success: true,
         user: <IUserResponse>{
-          ...new UserResponseModel(result).getUserResponseModel(),
+          ...new UserResponseModel(result as IUserDocument).getResponseModel(),
         },
       });
     }
-    return res.status(400).json(new BadRequestError('create', result).toJSON());
+    return res
+      .status(400)
+      .json(new BadRequestError('create', result as string).toJSON());
   }
 
   static async list(req: Request, res: Response): Promise<any> {
-    const users: IUserResponse[] = await UserDataAgent.list();
+    const users: IUserDocument[] = await UserController.userDataAgent.list();
 
     return res.status(200).json({
       success: true,
@@ -110,7 +115,7 @@ export class UserController {
         .json(new BadRequestError('update', validationResults));
     }
 
-    const updatedUser = await UserDataAgent.update(_id, body);
+    const updatedUser = await UserController.userDataAgent.update(_id, body);
 
     if (typeof updatedUser !== 'object') {
       return res.status(400).json(new BadRequestError('update', updatedUser));
@@ -127,7 +132,7 @@ export class UserController {
       user: { _id },
     } = req;
 
-    const deletedResponse = await UserDataAgent.delete(_id);
+    const deletedResponse = await UserController.userDataAgent.delete(_id);
 
     if (typeof deletedResponse !== 'string') {
       return res.status(200).json({
@@ -145,7 +150,7 @@ export class UserController {
     next: Function,
     userId: string,
   ): Promise<any> {
-    const user = await UserDataAgent.getById(userId);
+    const user = await UserController.userDataAgent.getById(userId);
 
     if (!user) {
       return res

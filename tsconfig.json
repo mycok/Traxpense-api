@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "es2015",
+    "module": "commonjs",
     "allowJs": true,
     "checkJs": true,
-    "jsx": "react",
+    "outDir": "dist",
+    "baseUrl": "src",
     "lib": ["ES2020.Promise", "ES2020"],
     "declaration": false,
-    "noEmit": true,
+    "noEmit": false,
     "downlevelIteration": true,
     "strict": true,
     "noImplicitAny": true,
@@ -24,6 +25,17 @@
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true
   },
-  "include": ["client/**/*", "server/**/*"],
-  "exclude": ["node_modules"]
+  "types": [
+    "node",
+    "mocha",
+    "chai"         
+  ],
+  "include": [
+    "server/**/*"
+  ],
+  "exclude": [
+    "coverage",
+    "node_modules",
+    "!node_modules/@types"
+  ]
 }

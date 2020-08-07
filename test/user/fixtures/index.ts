@@ -1,27 +1,32 @@
-function createUser(request: any, app: any, baseUrl: string, userObj: any) {
-  return request
-    .agent(app.app)
+import * as chai from 'chai';
+import chaiHttp = require('chai-http');
+
+export const chaiWithHttp = chai.use(chaiHttp);
+export const expect = chai.expect;
+
+export function createUser(app: any, baseUrl: string, userObj: any) {
+  return chaiWithHttp
+    .request(app.app)
     .post(`${baseUrl}/users`)
     .set('Accept', 'application/json')
     .send(userObj);
 }
 
-function updateUser(
-  request: any,
+export function updateUser(
   app: any,
   baseUrl: string,
   updateObj: any,
   userId: any,
 ) {
-  return request
-    .agent(app.app)
+  return chaiWithHttp
+    .request(app.app)
     .patch(`${baseUrl}/users/${userId}`)
     .set('Accept', 'application/json')
     .send(updateObj);
 }
 
-function deleteUser(request: any, app: any, baseUrl: string, userId: any) {
-  return request.agent(app.app).delete(`${baseUrl}/users/${userId}`);
+export function deleteUser(app: any, baseUrl: string, userId: any) {
+  return chaiWithHttp.request(app.app).delete(`${baseUrl}/users/${userId}`);
 }
 
 const UserObjectWithLessThanRequiredParams = {
@@ -102,7 +107,4 @@ export default {
   invalidUserObject,
   validUpdateObject,
   invalidUpdateObject,
-  createUser,
-  updateUser,
-  deleteUser,
 };
