@@ -1,50 +1,49 @@
 {
-  "env": {
-    "browser": true,
-    "es6": true,
-    "node": true
-  },
-  "extends": ["plugin:react/recommended", "airbnb"],
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
+    "env": {
+        "browser": true,
+        "es2020": true
     },
-    "ecmaVersion": 11,
-    "sourceType": "module"
-  },
-  "plugins": ["react", "@typescript-eslint"],
-  "settings": {
-    "import/resolver": {
-      "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
-      }
+    "extends": [
+        "airbnb-base"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 11,
+        "sourceType": "module"
     },
-    "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx"]
-    }
-  },
-  "overrides": [
-    {
-      "files": ["__tests__/**/*", "**/?(*.)+(spec|test).[jt]s?(x)"],
-      "env": {
-        "jest": true
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "settings": {
+        "import/resolver": {
+          "node": {
+            "extensions": [".js", ".ts"]
+          }
+        },
+        "import/parsers": {
+          "@typescript-eslint/parser": [".ts"]
+        }
       },
-      "rules": {
-        "func-names": "off",
-        "prefer-arrow-callback": "off"
-      }
-    },
-    {
-      "files": ["server/database/data-abstracts/**/*"],
-      "rules": {
-        "func-names": "off",
-        "prefer-arrow-callback": "off"
-      }
-    }
-  ],
-  "rules": {
-    "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".ts"] }],
+      "overrides": [
+        {
+          "files": ["test/**/*", "**/?(*.)+(spec|test).[jt]s?(x)"],
+          "env": {
+            "mocha": true
+          },
+          "rules": {
+            "func-names": "off",
+            "prefer-arrow-callback": "off"
+          }
+        },
+        {
+          "files": ["server/database/data-abstracts/**/*"],
+          "rules": {
+            "func-names": "off",
+            "prefer-arrow-callback": "off"
+          }
+        }
+      ],
+    "rules": {
     "import/prefer-default-export": "off",
     "prefer-destructuring": "off",
     "no-useless-escape": "off",
@@ -56,5 +55,5 @@
     "no-unused-vars": "off",
     "no-restricted-syntax": "off",
     "no-await-in-loop": "off"
-  }
+    }
 }

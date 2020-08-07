@@ -2,5 +2,5 @@
   "verbose": false,
   "watch": ["./server"],
   "ext": "ts",
-  "exec": "webpack --config webpack.config.client.js && webpack --mode=development --config webpack.config.server.js && node ./dist/server/server.generated.js"
+  "exec": "ts-node server/index.ts"
 }

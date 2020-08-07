@@ -4,7 +4,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import { userRouter } from '../routers/UserRouter';
-import { template } from '../../template';
 
 export class Application {
   app: express.Express;
@@ -13,9 +12,6 @@ export class Application {
     this.app = express();
     this.middlewareSetup();
     this.RouterSetup();
-    this.app.get('/', (req: express.Request, res: express.Response) => {
-      res.status(200).send(template());
-    });
   }
 
   private middlewareSetup() {
