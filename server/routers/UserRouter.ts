@@ -14,3 +14,5 @@ userRouter
   .get(UserController.read)
   .patch(UserController.checkDuplicatesOnUpdate, UserController.update)
   .delete(UserController.delete);
+
+userRouter.route('/api/v1/reset/:userId').patch(UserController.passwordReset);

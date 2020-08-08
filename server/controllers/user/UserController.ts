@@ -10,6 +10,11 @@ import { Validator } from '../../validation/validators';
 import { BadRequestError } from '../../extensions/BadRequestError';
 import { NotFoundError } from '../../extensions/NotFoundError';
 import { IUserDocument } from '../../database/data-abstracts/user/IUserDocument';
+import {
+  hashPassword,
+  doPasswordsMatch,
+  makeSalt,
+} from '../../../utils/passwordUtils';
 
 interface IUserRequest {
   id: string;
@@ -61,13 +66,18 @@ export class UserController {
         .status(400)
         .json(new BadRequestError('create', validationResults));
     }
-
-    const result = await UserController.userDataAgent.create(body);
+    const salt = makeSalt();
+    const hashedPassword = hashPassword(body.password, salt);
+    const result = await UserController.userDataAgent.create({
+      ...body,
+      password: hashedPassword,
+      salt,
+    });
 
     if (typeof result !== 'string') {
       return res.status(201).json({
         success: true,
-        user: <IUserResponse>{
+        user: {
           ...new UserResponseModel(result as IUserDocument).getResponseModel(),
         },
       });
@@ -92,7 +102,9 @@ export class UserController {
 
     return res.status(200).json({
       success: true,
-      user: <IUserResponse>user,
+      user: {
+        ...new UserResponseModel(user as IUserDocument).getResponseModel(),
+      },
     });
   }
 
@@ -141,6 +153,45 @@ export class UserController {
       });
     }
     return res.status(400).json(new BadRequestError('delete', deletedResponse));
+  }
+
+  static async passwordReset(req: any, res: Response): Promise<any> {
+    // TODO: - check and validate the password inputs
+    const {
+      user,
+      body: { oldPassword, newPassword },
+    } = req;
+    const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
+
+    if (!doPasswordsMatch(oldPassword, user.password, user.salt)) {
+      return res
+        .status(400)
+        .json(new BadRequestError('password-reset', "passwords don't match"));
+    }
+
+    if (!re.test(newPassword)) {
+      return res
+        .status(400)
+        .json(
+          new BadRequestError(
+            'password-reset',
+            'A password must contain a minimum of 8 characters including atleast one an uppercase, lowercase, number and a special character!',
+          ),
+        );
+    }
+
+    const hashedPassword = hashPassword(newPassword, user.salt);
+    const result = await UserController.userDataAgent.reset(
+      user._id,
+      hashedPassword,
+    );
+
+    if (typeof result === 'string') {
+      return res
+        .status(400)
+        .json(new BadRequestError('password-reset', result));
+    }
+    return res.status(200).json({ success: true });
   }
 
   // helpers and middleware

@@ -19,7 +19,7 @@ export class UserDataAgent extends DataAgent<IUserDocument> {
 
   async getById(userId: string): Promise<IUserDocument | null> {
     const user = await UserModel.findById(userId).select(
-      '_id username email avatar profile',
+      '_id username email password salt avatar profile',
     );
     return user;
   }
@@ -50,5 +50,11 @@ export class UserDataAgent extends DataAgent<IUserDocument> {
     }).catch((err) => handleErrorMessages(err));
 
     return deletedResponse;
+  }
+
+  async reset(userId: IUserDocument, newPassword: string): Promise<any> {
+    return await UserModel.findByIdAndUpdate(userId, {
+      password: newPassword,
+    }).catch((err) => handleErrorMessages(err));
   }
 }
