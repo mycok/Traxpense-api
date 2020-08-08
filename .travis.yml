@@ -20,7 +20,7 @@ before_script:
   - mongo mydb_test --eval 'db.createUser({user:"travis",pwd:"test",roles:["readWrite"]});'
 
 script:
-  - yarn test
+  - yarn test:coverage
 
 after_success:
   - ./cc-test-reporter after-build

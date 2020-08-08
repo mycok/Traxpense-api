@@ -13,10 +13,6 @@
       "type": "string",
       "format": "email"
     },
-    "password": {
-      "type": "string",
-      "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})"
-    },
     "avatar": {
       "type": "string"
     },

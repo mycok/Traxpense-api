@@ -25,7 +25,7 @@ describe('read user by id', () => {
         .get(`${baseUrl}/users/${user.id}`);
 
       expect(res.status).to.be.equal(200);
-      expect(res.body.user._id).to.be.equal(user.id);
+      expect(res.body.user.id).to.be.equal(user.id);
     });
   });
 
