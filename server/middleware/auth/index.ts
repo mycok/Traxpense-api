@@ -11,23 +11,31 @@ function verifyToken(req: any, res: any, token: string, next: Function) {
       err instanceof JsonWebTokenError
       && err.message === 'invalid signature'
     ) {
-      return res.status(400).json({ message: 'Invalid token signature' });
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid token signature',
+      });
     }
-    return res.status(500).json({ message: err.message });
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 }
 
 export function authenticate(req: any, res: any, next: Function) {
   const authorization = req.get('Authorization');
   if (authorization === undefined) {
-    return res
-      .status(401)
-      .json({ message: 'The authorization header must be set' });
+    return res.status(401).json({
+      success: false,
+      message: 'The authorization header must be set',
+    });
   }
 
   const [scheme, token]: string = authorization.split(' ');
   if (scheme !== 'Bearer') {
     return res.status(400).json({
+      success: false,
       message: 'The authorization header should use the Bearer scheme',
     });
   }
@@ -35,10 +43,23 @@ export function authenticate(req: any, res: any, next: Function) {
   const jwtRegex = /^[\w-]+\.[\w-]+\.[\w-.+/=]*$/;
   if (!token || !jwtRegex.test(token)) {
     return res.status(400).json({
-      message:
-        'The credentials used in the Authorization header should be a valid bcrypt digest',
+      success: false,
+      message: 'Invalid token',
     });
   }
 
   return verifyToken(req, res, token, next);
+}
+
+export function authorize(req: any, res: any, next: Function) {
+  const { user, auth } = req;
+
+  if (`${user._id}` !== auth._id) {
+    return res.status(403).json({
+      success: false,
+      message: 'You are not authorized to perform this action',
+    });
+  }
+
+  return next();
 }
