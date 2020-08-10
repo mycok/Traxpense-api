@@ -2,15 +2,19 @@ import { Application } from '../../server/app/Application';
 import { MongooseAccess } from '../../server/database/adaptors/MongoAccess';
 import UserModelFixture, { updateUser, expect } from './fixtures';
 import { IUserDocument } from '../../server/database/data-abstracts/user/IUserDocument';
+import { generateToken } from '../../utils/authUtils';
 
 const baseUrl = '/api/v1';
 describe('update user', () => {
   let user: IUserDocument;
+  let token: string;
 
   before(async () => {
     user = await MongooseAccess.mongooseConnection.models.User.create(
       UserModelFixture.validUserObject,
     );
+
+    token = generateToken(user._id, user.username, user.email);
   });
 
   after(async () => {
@@ -29,6 +33,7 @@ describe('update user', () => {
         baseUrl,
         UserModelFixture.validUpdateObject,
         user.id,
+        token,
       );
 
       expect(res.status).to.be.equal(200);
@@ -44,6 +49,7 @@ describe('update user', () => {
         baseUrl,
         UserModelFixture.invalidUpdateObject,
         user.id,
+        token,
       );
 
       expect(res.status).to.be.equal(400);
@@ -60,6 +66,7 @@ describe('update user', () => {
         baseUrl,
         UserModelFixture.validUpdateObject,
         user.id,
+        token,
       );
 
       expect(res.status).to.be.equal(400);

@@ -2,15 +2,19 @@ import { Application } from '../../server/app/Application';
 import { MongooseAccess } from '../../server/database/adaptors/MongoAccess';
 import { IUserDocument } from '../../server/database/data-abstracts/user/IUserDocument';
 import UserModelFixture, { chaiWithHttp, expect } from './fixtures';
+import { generateToken } from '../../utils/authUtils';
 
 const baseUrl = '/api/v1';
 describe('read user by id', () => {
   let user: IUserDocument;
+  let token: string;
 
   before(async () => {
     user = await MongooseAccess.mongooseConnection.models.User.create(
       UserModelFixture.validUserObject,
     );
+
+    token = generateToken(user._id, user.username, user.email);
   });
 
   after(async () => {
@@ -22,7 +26,8 @@ describe('read user by id', () => {
     it('a user matching the provided id should be successfully retrieved', async () => {
       const res = await chaiWithHttp
         .request(app.app)
-        .get(`${baseUrl}/users/${user.id}`);
+        .get(`${baseUrl}/users/${user.id}`)
+        .set('authorization', `Bearer ${token}`);
 
       expect(res.status).to.be.equal(200);
       expect(res.body.user.id).to.be.equal(user.id);

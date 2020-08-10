@@ -16,9 +16,9 @@
 
 `Development Environment setup`
 
-- clone the repository and run `cd mern-skeleton` to change to the project directory
+- clone the repository and run `cd traxpence-api` to change to the project directory
 - run `yarn` command to install all the necessary dependencies and build the application
-- run `yarn start` or `yarn nodemon` command to run the application
+- run `yarn start` or `yarn run dev` command to run the application
 
 `Test Environment setup`
 

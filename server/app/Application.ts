@@ -4,6 +4,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import { userRouter } from '../routers/UserRouter';
+import { authRouter } from '../routers/AuthRouter';
 
 export class Application {
   app: express.Express;
@@ -26,6 +27,7 @@ export class Application {
 
   private RouterSetup() {
     this.app.use(userRouter);
+    this.app.use(authRouter);
   }
 
   private clientErrorHandler(
@@ -35,9 +37,9 @@ export class Application {
     next: Function,
   ) {
     if (err.thrown) {
-      res.status(err.status).send({ error: err.message });
+      return res.status(err.status).send({ error: err.message });
     }
 
-    next();
+    return next();
   }
 }

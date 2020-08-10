@@ -4,10 +4,6 @@ import UserModelFixture, { expect, createUser } from './fixtures';
 
 const baseUrl = '/api/v1';
 describe('create user', () => {
-  before(() => {
-    MongooseAccess.connect('mongodb://localhost:27017/test');
-  });
-
   after(async () => {
     await MongooseAccess.mongooseConnection.models.User.deleteMany({});
   });

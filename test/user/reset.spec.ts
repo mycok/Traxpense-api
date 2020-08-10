@@ -3,6 +3,7 @@ import { MongooseAccess } from '../../server/database/adaptors/MongoAccess';
 import { IUserDocument } from '../../server/database/data-abstracts/user/IUserDocument';
 import UserModelFixture, { chaiWithHttp, expect } from './fixtures';
 import { hashPassword, makeSalt } from '../../utils/passwordUtils';
+import { generateToken } from '../../utils/authUtils';
 
 const baseUrl = '/api/v1';
 /*
@@ -11,6 +12,7 @@ const baseUrl = '/api/v1';
   */
 describe('reset password', () => {
   let user: IUserDocument;
+  let token: string;
 
   before(async () => {
     const salt = makeSalt();
@@ -23,6 +25,8 @@ describe('reset password', () => {
       password: hashedPassword,
       salt,
     });
+
+    token = generateToken(user._id, user.username, user.email);
   });
 
   after(async () => {
@@ -35,6 +39,7 @@ describe('reset password', () => {
       const res = await chaiWithHttp
         .request(app.app)
         .patch(`${baseUrl}/reset/${user.id}`)
+        .set('authorization', `Bearer ${token}`)
         .send({ oldPassword: 'passWord@23', newPassword: 'nnewpaSSword#23' });
 
       expect(res.status).to.be.equal(400);
@@ -47,6 +52,7 @@ describe('reset password', () => {
       const res = await chaiWithHttp
         .request(app.app)
         .patch(`${baseUrl}/reset/${user.id}`)
+        .set('authorization', `Bearer ${token}`)
         .send({
           oldPassword: UserModelFixture.validUserObject.password,
           newPassword: 'nnewpaSSword23',
@@ -64,6 +70,7 @@ describe('reset password', () => {
       const res = await chaiWithHttp
         .request(app.app)
         .patch(`${baseUrl}/reset/${user.id}`)
+        .set('authorization', `Bearer ${token}`)
         .send({
           oldPassword: UserModelFixture.validUserObject.password,
           newPassword: 'nnewpaSSword#23',

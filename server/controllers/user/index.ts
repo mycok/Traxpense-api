@@ -10,6 +10,7 @@ import { Validator } from '../../validation/validators';
 import { BadRequestError } from '../../extensions/BadRequestError';
 import { NotFoundError } from '../../extensions/NotFoundError';
 import { IUserDocument } from '../../database/data-abstracts/user/IUserDocument';
+import { generateToken } from '../../../utils/authUtils';
 import {
   hashPassword,
   doPasswordsMatch,
@@ -17,7 +18,6 @@ import {
 } from '../../../utils/passwordUtils';
 
 interface IUserRequest {
-  id: string;
   username: string;
   email: string;
   password: string;
@@ -75,11 +75,13 @@ export class UserController {
     });
 
     if (typeof result !== 'string') {
+      const token = generateToken(result._id, result.username, result.email);
       return res.status(201).json({
         success: true,
         user: {
           ...new UserResponseModel(result as IUserDocument).getResponseModel(),
         },
+        token,
       });
     }
     return res
