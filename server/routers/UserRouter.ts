@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import { UserController } from '../controllers/user';
-import { authenticate } from '../middleware/auth/index';
+import { authenticate, authorize } from '../middleware/auth';
 
 export const userRouter: Router = express.Router();
 
@@ -12,14 +12,15 @@ userRouter
 
 userRouter
   .route('/api/v1/users/:userId')
-  .get(authenticate, UserController.read)
+  .get(authenticate, authorize, UserController.read)
   .patch(
     authenticate,
+    authorize,
     UserController.checkDuplicatesOnUpdate,
     UserController.update,
   )
-  .delete(authenticate, UserController.delete);
+  .delete(authenticate, authorize, UserController.delete);
 
 userRouter
   .route('/api/v1/reset/:userId')
-  .patch(authenticate, UserController.passwordReset);
+  .patch(authenticate, authorize, UserController.passwordReset);
