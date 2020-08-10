@@ -4,7 +4,7 @@
   "description": "skeleton setup for MERN projects",
   "main": "./server/index.ts",
   "scripts": {
-    "test": "mocha",
+    "test": "dotenv mocha",
     "coverage": "nyc mocha",
     "test:coverage": "yarn run coverage",
     "clean": "rimraf ./dist && rimraf reports",
@@ -34,6 +34,7 @@
     "@types/cors": "^2.8.6",
     "@types/express": "^4.17.7",
     "@types/helmet": "^0.0.47",
+    "@types/jsonwebtoken": "^8.5.0",
     "@types/mocha": "^8.0.1",
     "@types/mongoose": "^5.7.32",
     "@types/node": "^14.0.24",
@@ -56,11 +57,13 @@
     "typescript": "^3.9.6"
   },
   "dependencies": {
+    "@types/express-jwt": "^0.0.42",
     "ajv": "^6.12.3",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "helmet": "^3.23.3",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.25",
     "winston": "^3.3.3"
   },

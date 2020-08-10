@@ -17,16 +17,26 @@ export function updateUser(
   baseUrl: string,
   updateObj: any,
   userId: any,
+  token: string,
 ) {
   return chaiWithHttp
     .request(app.app)
     .patch(`${baseUrl}/users/${userId}`)
     .set('Accept', 'application/json')
+    .set('authorization', `Bearer ${token}`)
     .send(updateObj);
 }
 
-export function deleteUser(app: any, baseUrl: string, userId: any) {
-  return chaiWithHttp.request(app.app).delete(`${baseUrl}/users/${userId}`);
+export function deleteUser(
+  app: any,
+  baseUrl: string,
+  userId: any,
+  token: string,
+) {
+  return chaiWithHttp
+    .request(app.app)
+    .delete(`${baseUrl}/users/${userId}`)
+    .set('authorization', `Bearer ${token}`);
 }
 
 const UserObjectWithLessThanRequiredParams = {

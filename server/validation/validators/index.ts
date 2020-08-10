@@ -44,6 +44,26 @@ export class Validator {
         pathPrefix,
       );
     }
-    return true;
+    return isValid as boolean;
+  }
+
+  public static validateAuthData<T>(
+    schema: any,
+    pathPrefix: string,
+    data: T,
+  ): boolean | string {
+    const ajvValidate = new Ajv()
+      .addFormat('email', /^[\w.+]+@\w+\.\w+$/)
+      .compile(schema);
+
+    const isValid = ajvValidate(data);
+
+    if (!isValid) {
+      return this.generateValidationErrorMessages(
+        ajvValidate.errors,
+        pathPrefix,
+      );
+    }
+    return isValid as boolean;
   }
 }
