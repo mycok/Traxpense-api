@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 import { userRouter } from '../routers/UserRouter';
 import { authRouter } from '../routers/AuthRouter';
+import { expenseRouter } from '../routers/ExpenseRouter';
 
 export class Application {
   app: express.Express;
@@ -28,6 +29,7 @@ export class Application {
   private RouterSetup() {
     this.app.use(userRouter);
     this.app.use(authRouter);
+    this.app.use(expenseRouter);
   }
 
   private clientErrorHandler(
