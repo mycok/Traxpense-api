@@ -2,7 +2,7 @@ const getUniqueErrorMessage = (err: any): string => {
   let output: string;
   try {
     const fieldName = err.message.substring(
-      err.message.lastIndexOf('.$') + 61,
+      err.message.lastIndexOf('.$') + 63,
       err.message.lastIndexOf('_1'),
     );
     output = `${fieldName.charAt(0).toUpperCase()}${fieldName.slice(
@@ -38,5 +38,6 @@ export const handleErrorMessages = (err: any): string => {
       }
     });
   }
+
   return errorMessage;
 };

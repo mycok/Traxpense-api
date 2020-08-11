@@ -1,5 +1,4 @@
-import { IUserDocument } from '../../data-abstracts/user/IUserDocument';
-import { UserModel } from '../../data-abstracts/user/UserModel';
+import { IUserDocument, UserModel } from '../../data-abstracts';
 import { handleErrorMessages } from '../../../../utils/dbErrorHandler';
 import { DataAgent } from '../../../../utils/DataAgent';
 
