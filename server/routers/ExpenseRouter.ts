@@ -6,4 +6,5 @@ export const expenseRouter: Router = express.Router();
 
 expenseRouter
   .route('/api/v1/expenses')
-  .post(authenticate, ExpenseController.create);
+  .post(authenticate, ExpenseController.create)
+  .get(authenticate, ExpenseController.list);

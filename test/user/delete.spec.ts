@@ -1,6 +1,7 @@
 import { Application } from '../../server/app/Application';
 import { MongooseAccess } from '../../server/database/adaptors/MongoAccess';
-import UserModelFixture, { deleteUser, expect, chaiWithHttp } from './fixtures';
+import UserModelFixture, { deleteUser } from './fixtures';
+import { expect, chaiWithHttp } from '..';
 import { IUserDocument } from '../../server/database/data-abstracts/user/IUserDocument';
 import { generateToken } from '../../utils/authUtils';
 

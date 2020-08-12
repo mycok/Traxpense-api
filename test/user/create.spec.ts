@@ -1,6 +1,7 @@
 import { Application } from '../../server/app/Application';
 import { MongooseAccess } from '../../server/database/adaptors/MongoAccess';
-import UserModelFixture, { expect, createUser } from './fixtures';
+import UserModelFixture, { createUser } from './fixtures';
+import { expect } from '..';
 
 const baseUrl = '/api/v1';
 describe('create user', () => {
