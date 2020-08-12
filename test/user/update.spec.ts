@@ -1,6 +1,7 @@
 import { Application } from '../../server/app/Application';
 import { MongooseAccess } from '../../server/database/adaptors/MongoAccess';
-import UserModelFixture, { updateUser, expect } from './fixtures';
+import UserModelFixture, { updateUser } from './fixtures';
+import { expect } from '..';
 import { IUserDocument } from '../../server/database/data-abstracts/user/IUserDocument';
 import { generateToken } from '../../utils/authUtils';
 

@@ -1,6 +1,7 @@
 import { Application } from '../../server/app/Application';
 import { MongooseAccess } from '../../server/database/adaptors/MongoAccess';
-import UserModelFixture, { chaiWithHttp, expect } from './fixtures';
+import UserModelFixture from './fixtures';
+import { expect, chaiWithHttp } from '..';
 
 const baseUrl = '/api/v1';
 describe('list all users', () => {

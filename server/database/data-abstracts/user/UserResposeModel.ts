@@ -1,6 +1,6 @@
 import { IUserDocument } from './IUserDocument';
 import { ResponseModel } from '../../../../utils/ResponseModel';
-// TODO: - extend this class by adding getters for all the user documennt properties
+// TODO: - extend this class by adding more getters
 export class UserResponseModel implements ResponseModel<IUserDocument> {
   document: IUserDocument;
 

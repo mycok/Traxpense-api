@@ -12,7 +12,11 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
   }
 
   async list(): Promise<any> {
-    return Promise.resolve(null);
+    const expenses: IExpenseDocument[] = await ExpenseModel.find().select(
+      '_id title amount category notes incurredOn',
+    );
+
+    return expenses;
   }
 
   async getById(): Promise<any> {

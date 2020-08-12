@@ -1,7 +1,8 @@
 import { Application } from '../../server/app/Application';
 import { MongooseAccess } from '../../server/database/adaptors/MongoAccess';
 import { IUserDocument } from '../../server/database/data-abstracts/user/IUserDocument';
-import UserModelFixture, { chaiWithHttp, expect } from './fixtures';
+import UserModelFixture from './fixtures';
+import { expect, chaiWithHttp } from '..';
 import { generateToken } from '../../utils/authUtils';
 
 const baseUrl = '/api/v1';

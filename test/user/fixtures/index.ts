@@ -1,8 +1,4 @@
-import * as chai from 'chai';
-import chaiHttp = require('chai-http');
-
-export const chaiWithHttp = chai.use(chaiHttp);
-export const expect = chai.expect;
+import { chaiWithHttp } from '../..';
 
 export function createUser(app: any, baseUrl: string, userObj: any) {
   return chaiWithHttp
