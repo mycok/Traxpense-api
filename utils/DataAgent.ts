@@ -1,7 +1,7 @@
 export abstract class DataAgent<T> {
   abstract async create(data: T): Promise<any>;
 
-  abstract async list(): Promise<any>;
+  abstract async list(...args: any): Promise<any>;
 
   abstract async getById(id: string): Promise<any>;
 

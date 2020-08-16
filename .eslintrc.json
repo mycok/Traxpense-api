@@ -55,6 +55,7 @@
     "no-unused-vars": "off",
     "no-restricted-syntax": "off",
     "no-await-in-loop": "off",
-    "no-return-await": "off"
+    "no-return-await": "off",
+    "quote-props": "off"
     }
 }

@@ -16,6 +16,7 @@ export class ExponseResponseModel implements ResponseModel<IExpenseDocument> {
       category: this.document.category,
       incurredOn: this.document.incurredOn,
       notes: this.document.notes,
+      createdAt: this.document.createdAt,
     });
   }
 }

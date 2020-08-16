@@ -68,8 +68,8 @@ describe('login', () => {
           password: UserModelFixture.validUserObject.password,
         });
 
-      expect(res.status).to.be.equal(400);
-      expect(res.body.message).to.be.equal('email not found');
+      expect(res.status).to.be.equal(404);
+      expect(res.body.message).to.be.equal('Email not found');
     });
   });
 
@@ -84,7 +84,7 @@ describe('login', () => {
         });
 
       expect(res.status).to.be.equal(400);
-      expect(res.body.message).to.be.equal("passwords don't match");
+      expect(res.body.message).to.be.equal("Passwords don't match");
     });
   });
 });

@@ -38,14 +38,14 @@ export class AuthController {
 
     if (!user) {
       return res
-        .status(400)
-        .json(new NotFoundError('sign-in', 'email not found'));
+        .status(404)
+        .json(new NotFoundError('sign-in', 'Email not found'));
     }
 
     if (!doPasswordsMatch(body.password, user.password, user.salt)) {
       return res
         .status(400)
-        .json(new BadRequestError('sign-in', "passwords don't match"));
+        .json(new BadRequestError('sign-in', "Passwords don't match"));
     }
 
     const token = generateToken(user._id, user.username, user.email);

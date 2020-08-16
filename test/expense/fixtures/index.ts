@@ -20,6 +20,30 @@ export async function listExpenses(app: any, baseUrl: string, token: string) {
     .set('Authorization', `Bearer ${token}`);
 }
 
+export async function listExpensesWithQueryStrs(
+  app: any,
+  baseUrl: string,
+  token: string,
+  query: string,
+) {
+  return await chaiWithHttp
+    .request(app.app)
+    .get(`${baseUrl}/expenses/?${query}`)
+    .set('Authorization', `Bearer ${token}`);
+}
+
+export async function read(
+  app: any,
+  baseUrl: string,
+  token: string,
+  expId: string,
+) {
+  return await chaiWithHttp
+    .request(app.app)
+    .get(`${baseUrl}/expenses/${expId}`)
+    .set('Authorization', `Bearer ${token}`);
+}
+
 export const validExpenseObject = {
   title: 'test-expense',
   amount: 23400,

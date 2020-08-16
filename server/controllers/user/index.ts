@@ -74,19 +74,20 @@ export class UserController {
       salt,
     });
 
-    if (typeof result !== 'string') {
-      const token = generateToken(result._id, result.username, result.email);
-      return res.status(201).json({
-        success: true,
-        user: {
-          ...new UserResponseModel(result as IUserDocument).getResponseModel(),
-        },
-        token,
-      });
+    if (typeof result === 'string') {
+      return res
+        .status(400)
+        .json(new BadRequestError('create', result as string).toJSON());
     }
-    return res
-      .status(400)
-      .json(new BadRequestError('create', result as string).toJSON());
+
+    const token = generateToken(result._id, result.username, result.email);
+    return res.status(201).json({
+      success: true,
+      user: {
+        ...new UserResponseModel(result as IUserDocument).getResponseModel(),
+      },
+      token,
+    });
   }
 
   static async list(req: Request, res: Response): Promise<any> {
@@ -148,13 +149,16 @@ export class UserController {
 
     const deletedResponse = await UserController.userDataAgent.delete(_id);
 
-    if (typeof deletedResponse !== 'string') {
-      return res.status(200).json({
-        success: true,
-        deletedResponse,
-      });
+    if (typeof deletedResponse === 'string') {
+      return res
+        .status(400)
+        .json(new BadRequestError('delete', deletedResponse));
     }
-    return res.status(400).json(new BadRequestError('delete', deletedResponse));
+
+    return res.status(200).json({
+      success: true,
+      deletedResponse,
+    });
   }
 
   static async passwordReset(req: any, res: Response): Promise<any> {
@@ -168,7 +172,7 @@ export class UserController {
     if (!doPasswordsMatch(oldPassword, user.password, user.salt)) {
       return res
         .status(400)
-        .json(new BadRequestError('password-reset', "passwords don't match"));
+        .json(new BadRequestError('password-reset', "Passwords don't match"));
     }
 
     if (!re.test(newPassword)) {
@@ -208,7 +212,7 @@ export class UserController {
     if (!user) {
       return res
         .status(404)
-        .json(new NotFoundError('getById', 'User Not Found').toJSON());
+        .json(new NotFoundError('getById', 'User not found').toJSON());
     }
     req.user = user;
 
