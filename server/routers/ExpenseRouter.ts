@@ -8,3 +8,7 @@ expenseRouter
   .route('/api/v1/expenses')
   .post(authenticate, ExpenseController.create)
   .get(authenticate, ExpenseController.list);
+
+expenseRouter
+  .route('/api/v1/expenses/:expId')
+  .get(authenticate, ExpenseController.read);

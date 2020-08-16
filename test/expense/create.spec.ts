@@ -12,6 +12,7 @@ describe('create expense', () => {
   before(async () => {
     result = await createUser(app, baseUrl, UserModelFixture.validUserObject);
   });
+
   after(async () => {
     await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(
       async () => {
@@ -33,7 +34,7 @@ describe('create expense', () => {
     });
   });
 
-  describe('when a request contains all the invalid / missing required properties', () => {
+  describe('when a request contains invalid / missing required properties', () => {
     const expense = {
       amount: 23400,
       category: 'testing',

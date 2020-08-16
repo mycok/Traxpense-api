@@ -47,7 +47,7 @@ describe('read user by id', () => {
         .get(`${baseUrl}/users/${user.id}`);
 
       expect(res.status).to.be.equal(404);
-      expect(res.body.message).to.be.equal('User Not Found');
+      expect(res.body.message).to.be.equal('User not found');
     });
   });
 });

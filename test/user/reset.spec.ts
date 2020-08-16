@@ -44,7 +44,7 @@ describe('reset password', () => {
         .send({ oldPassword: 'passWord@23', newPassword: 'nnewpaSSword#23' });
 
       expect(res.status).to.be.equal(400);
-      expect(res.body.message).to.be.equal("passwords don't match");
+      expect(res.body.message).to.be.equal("Passwords don't match");
     });
   });
 
