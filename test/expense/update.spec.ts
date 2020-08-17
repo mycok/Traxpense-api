@@ -1,11 +1,11 @@
 import { Application } from '../../server/app/Application';
 import { MongooseAccess } from '../../server/database/adaptors/MongoAccess';
 import UserModelFixture, { createUser } from '../user/fixtures';
-import { validExpenseObject, read, createExpense } from './fixtures';
+import { validExpenseObject, updateExpense, createExpense } from './fixtures';
 import { expect } from '..';
 
 const baseUrl = '/api/v1';
-describe('read expense', () => {
+describe('update expense', () => {
   const app = new Application();
   let result: any;
   let expense: any;
@@ -31,36 +31,31 @@ describe('read expense', () => {
     );
   });
 
-  describe('when a request is made to list a specific expense by providing a valid expense id', () => {
-    it('an expense matching the provided id should be returned', async () => {
-      const res = await read(
+  describe('when a request is made to update a specific expense by providing a valid expense id', () => {
+    it('an updated expense matching the provided id should be returned', async () => {
+      const res = await updateExpense(
         app,
         baseUrl,
         result.body.token,
         expense.body.expense.id,
+        { title: 'updated-expense' },
       );
 
       expect(res.status).to.be.equal(200);
     });
   });
 
-  describe('when a request is made to list a specific expense with a non existing expense id', () => {
-    before(async () => {
-      await MongooseAccess.mongooseConnection.models.Expense.deleteOne({
-        _id: expense.body.expense.id,
-      });
-    });
-
-    it('a not found error should be returned', async () => {
-      const res = await read(
+  describe('when a request is made to update a specific expense with one or more invalid properties', () => {
+    it('a bad request error should be returned', async () => {
+      const res = await updateExpense(
         app,
         baseUrl,
         result.body.token,
         expense.body.expense.id,
+        { title: 456 },
       );
 
-      expect(res.status).to.be.equal(404);
-      expect(res.body.message).to.be.equal('Expense not found');
+      expect(res.status).to.be.equal(400);
     });
   });
 });

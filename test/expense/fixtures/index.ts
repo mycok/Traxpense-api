@@ -13,6 +13,20 @@ export async function createExpense(
     .send(data);
 }
 
+export async function updateExpense(
+  app: any,
+  baseUrl: string,
+  token: string,
+  expId: string,
+  data: any,
+) {
+  return await chaiWithHttp
+    .request(app.app)
+    .patch(`${baseUrl}/expenses/${expId}`)
+    .set('Authorization', `Bearer ${token}`)
+    .send(data);
+}
+
 export async function listExpenses(app: any, baseUrl: string, token: string) {
   return await chaiWithHttp
     .request(app.app)

@@ -2,14 +2,13 @@ import { IExpenseDocument, ExpenseModel } from '../../data-abstracts';
 import { handleErrorMessages } from '../../../../utils/dbErrorHandler';
 import { DataAgent } from '../../../../utils/DataAgent';
 
-// TODO: - add pagination for lists
 export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
   async create(
     expenseData: IExpenseDocument,
   ): Promise<IExpenseDocument | string> {
-    const expense = await ExpenseModel.create(expenseData).catch((err) => handleErrorMessages(err));
+    const result = await ExpenseModel.create(expenseData).catch((err) => handleErrorMessages(err));
 
-    return expense;
+    return result;
   }
 
   /*
@@ -18,10 +17,12 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
     ordered by _id and in a descending order.
     the cursor filter is based on the same predicate as the sort filter,
     that is if cursor is in descending order, then the sort filter follows suit
+
+    TODO: - add protection for quering other user's expenses by sending a query without any filters
   */
   async list(
     limit: number,
-    userId?: string,
+    userId: string,
     startDate?: Date,
     endDate?: Date,
     cursor?: string,
@@ -54,13 +55,28 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
   }
 
   async getById(expId: string): Promise<IExpenseDocument | string> {
-    const expense = await ExpenseModel.findById(expId).catch((err) => handleErrorMessages(err));
+    const result = await ExpenseModel.findById(expId)
+      .populate('recordedBy')
+      .catch((err) => handleErrorMessages(err));
 
-    return expense;
+    return result;
   }
 
-  async update(): Promise<any> {
-    return Promise.resolve(null);
+  async update(
+    expId: string,
+    propsToUpdate: any,
+  ): Promise<IExpenseDocument | string> {
+    const result = await ExpenseModel.findOneAndUpdate(
+      { _id: expId },
+      propsToUpdate,
+      {
+        omitUndefined: true,
+        new: true,
+        runValidators: true,
+      },
+    ).catch((err) => handleErrorMessages(err));
+
+    return result;
   }
 
   async delete(): Promise<any> {

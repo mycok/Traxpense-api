@@ -4,9 +4,9 @@ import { DataAgent } from '../../../../utils/DataAgent';
 
 export class UserDataAgent extends DataAgent<IUserDocument> {
   async create(userData: IUserDocument): Promise<IUserDocument | string> {
-    const newUser = await UserModel.create(userData).catch((err) => handleErrorMessages(err));
+    const result = await UserModel.create(userData).catch((err) => handleErrorMessages(err));
 
-    return newUser;
+    return result;
   }
 
   async list(): Promise<IUserDocument[]> {
@@ -17,30 +17,29 @@ export class UserDataAgent extends DataAgent<IUserDocument> {
   }
 
   async getById(userId: string): Promise<IUserDocument | null> {
-    const user = await UserModel.findById(userId).select(
+    const result = await UserModel.findById(userId).select(
       '_id username email password salt avatar profile',
     );
-    return user;
+    return result;
   }
 
   async update(
     userId: string,
     propsToUpdate: any,
   ): Promise<IUserDocument | string> {
-    const updatedUser = await UserModel.findOneAndUpdate(
+    const result = await UserModel.findOneAndUpdate(
       { _id: userId },
       propsToUpdate,
       {
         omitUndefined: true,
         new: true,
         runValidators: true,
-        context: 'query',
       },
     )
       .select('_id username email avatar profile')
       .catch((err) => handleErrorMessages(err));
 
-    return updatedUser;
+    return result;
   }
 
   async delete(userId: string): Promise<any> {
