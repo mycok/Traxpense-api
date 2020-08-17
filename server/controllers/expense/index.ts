@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import createExpenseSchema from '../../validation/schemas/expense/create.json';
 import updateExpenseSchema from '../../validation/schemas/expense/update.json';
 import { Validator } from '../../validation/validators';
@@ -80,22 +80,12 @@ export class ExpenseController {
     });
   }
 
-  static async read(req: Request, res: Response): Promise<any> {
-    const result = await ExpenseController.expenseDataAgent.getById(
-      req.params.expId,
-    );
-
-    if (typeof result === 'string') {
-      return res
-        .status(400)
-        .json(new BadRequestError('read-expense', result as string).toJSON());
-    }
+  static async read(req: any, res: Response): Promise<any> {
+    const { expense } = req;
 
     return res.status(200).json({
       success: true,
-      expense: new ExponseResponseModel(
-        result as IExpenseDocument,
-      ).getResponseModel(),
+      expense: { ...new ExponseResponseModel(expense).getResponseModel() },
     });
   }
 
@@ -127,6 +117,27 @@ export class ExpenseController {
     return res.status(200).json({
       success: true,
       expense: new ExponseResponseModel(result).getResponseModel(),
+    });
+  }
+
+  static async delete(req: any, res: Response): Promise<any> {
+    const {
+      expense: { _id },
+    } = req;
+
+    const deletedResponse = await ExpenseController.expenseDataAgent.delete(
+      _id,
+    );
+
+    if (typeof deletedResponse === 'string') {
+      return res
+        .status(400)
+        .json(new BadRequestError('delete', deletedResponse));
+    }
+
+    return res.status(200).json({
+      success: true,
+      deletedResponse,
     });
   }
 

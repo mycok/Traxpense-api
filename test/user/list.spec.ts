@@ -4,7 +4,7 @@ import UserModelFixture from './fixtures';
 import { expect, chaiWithHttp } from '..';
 
 const baseUrl = '/api/v1';
-describe('list all users', () => {
+describe('list users', () => {
   after(async () => {
     await MongooseAccess.mongooseConnection.models.User.deleteMany({});
   });

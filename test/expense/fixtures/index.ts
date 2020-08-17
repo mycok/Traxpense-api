@@ -58,6 +58,18 @@ export async function read(
     .set('Authorization', `Bearer ${token}`);
 }
 
+export function deleteExpense(
+  app: any,
+  baseUrl: string,
+  token: string,
+  expId: string,
+) {
+  return chaiWithHttp
+    .request(app.app)
+    .delete(`${baseUrl}/expenses/${expId}`)
+    .set('authorization', `Bearer ${token}`);
+}
+
 export const validExpenseObject = {
   title: 'test-expense',
   amount: 23400,

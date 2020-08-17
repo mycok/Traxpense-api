@@ -6,7 +6,7 @@ import { IUserDocument } from '../../server/database/data-abstracts/user/IUserDo
 import { generateToken } from '../../utils/authUtils';
 
 const baseUrl = '/api/v1';
-describe('delete user by id', () => {
+describe('delete user', () => {
   let user: IUserDocument;
   let user1: IUserDocument;
   let token: string;

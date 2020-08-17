@@ -9,7 +9,7 @@ import {
 import { expect } from '..';
 
 const baseUrl = '/api/v1';
-describe('list all expenses', () => {
+describe('list expenses', () => {
   const app = new Application();
   let result: any;
   let cursor: string;
