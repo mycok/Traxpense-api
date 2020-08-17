@@ -84,7 +84,7 @@ export class UserController {
     return res.status(201).json({
       success: true,
       user: {
-        ...new UserResponseModel(result as IUserDocument).getResponseModel(),
+        ...new UserResponseModel(result).getResponseModel(),
       },
       token,
     });
@@ -130,15 +130,15 @@ export class UserController {
         .json(new BadRequestError('update', validationResults));
     }
 
-    const updatedUser = await UserController.userDataAgent.update(_id, body);
+    const result = await UserController.userDataAgent.update(_id, body);
 
-    if (typeof updatedUser !== 'object') {
-      return res.status(400).json(new BadRequestError('update', updatedUser));
+    if (typeof result !== 'object') {
+      return res.status(400).json(new BadRequestError('update', result));
     }
 
     return res.status(200).json({
       success: true,
-      user: <IUserResponse>updatedUser,
+      user: <IUserResponse>result,
     });
   }
 

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import expenseSchema from '../../validation/schemas/expense/create.json';
+import createExpenseSchema from '../../validation/schemas/expense/create.json';
+import updateExpenseSchema from '../../validation/schemas/expense/update.json';
 import { Validator } from '../../validation/validators';
 import { BadRequestError } from '../../extensions/BadRequestError';
 import { ExpenseDataAgent } from '../../database/data-agents/expense/ExpenseDataAgent';
@@ -20,7 +21,7 @@ export class ExpenseController {
   static async create(req: any, res: Response): Promise<any> {
     const { auth, body } = req;
     const validationResults = Validator.validate<IExpenseRequest>(
-      expenseSchema,
+      createExpenseSchema,
       'expense',
       body,
     );
@@ -84,12 +85,6 @@ export class ExpenseController {
       req.params.expId,
     );
 
-    if (!result) {
-      return res
-        .status(404)
-        .json(new NotFoundError('read-expense', 'Expense not Found'));
-    }
-
     if (typeof result === 'string') {
       return res
         .status(400)
@@ -102,5 +97,55 @@ export class ExpenseController {
         result as IExpenseDocument,
       ).getResponseModel(),
     });
+  }
+
+  static async update(req: any, res: Response): Promise<any> {
+    const {
+      expense: { _id },
+      body,
+    } = req;
+    const validationResults = Validator.validate<IExpenseRequest>(
+      updateExpenseSchema,
+      'expense',
+      body,
+    );
+
+    if (typeof validationResults === 'string') {
+      return res
+        .status(400)
+        .json(
+          new BadRequestError('create-expense', validationResults).toJSON(),
+        );
+    }
+
+    const result = await ExpenseController.expenseDataAgent.update(_id, body);
+
+    if (typeof result !== 'object') {
+      return res.status(400).json(new BadRequestError('update', result));
+    }
+
+    return res.status(200).json({
+      success: true,
+      expense: new ExponseResponseModel(result).getResponseModel(),
+    });
+  }
+
+  // helper methods
+  static async getById(
+    req: any,
+    res: Response,
+    next: Function,
+    expId: string,
+  ): Promise<any> {
+    const expense = await ExpenseController.expenseDataAgent.getById(expId);
+
+    if (!expense) {
+      return res
+        .status(404)
+        .json(new NotFoundError('getById', 'Expense not found').toJSON());
+    }
+    req.expense = expense;
+
+    return next();
   }
 }

@@ -1,8 +1,11 @@
 import express, { Router } from 'express';
 import { ExpenseController } from '../controllers/expense';
-import { authenticate } from '../middleware/auth/index';
+import { authenticate } from '../middleware/auth';
+import { authorize } from '../middleware/expense';
 
 export const expenseRouter: Router = express.Router();
+
+expenseRouter.param('expId', ExpenseController.getById);
 
 expenseRouter
   .route('/api/v1/expenses')
@@ -11,4 +14,5 @@ expenseRouter
 
 expenseRouter
   .route('/api/v1/expenses/:expId')
-  .get(authenticate, ExpenseController.read);
+  .get(authenticate, authorize, ExpenseController.read)
+  .patch(authenticate, authorize, ExpenseController.update);
