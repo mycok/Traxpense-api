@@ -141,6 +141,24 @@ export class ExpenseController {
     });
   }
 
+  static async currentMonthPreview(req: any, res: Response): Promise<any> {
+    const {
+      auth: { _id },
+    } = req;
+    const currentPreview = await ExpenseController.expenseDataAgent.currentMonthPreview(
+      _id,
+    );
+
+    return res.status(200).json({
+      success: true,
+      expensePreview: {
+        month: currentPreview[0].month[0],
+        today: currentPreview[0].today[0],
+        yesterday: currentPreview[0].yesterday[0],
+      },
+    });
+  }
+
   // helper methods
   static async getById(
     req: any,

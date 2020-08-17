@@ -1,3 +1,5 @@
+import { Types } from 'mongoose';
+
 import { IExpenseDocument, ExpenseModel } from '../../data-abstracts';
 import { handleErrorMessages } from '../../../../utils/dbErrorHandler';
 import { DataAgent } from '../../../../utils/DataAgent';
@@ -11,15 +13,16 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
     return result;
   }
 
-  /*
-    we use cursor based pagination along with a
-    date filter to return a paginated list filtered by date,
-    ordered by _id and in a descending order.
-    the cursor filter is based on the same predicate as the sort filter,
-    that is if cursor is in descending order, then the sort filter follows suit
+  /**
+   * we use cursor based pagination along with a date filter to return
+   a paginated list filtered by date, ordered by _id and in a descending order.
 
-    TODO: - add protection for quering other user's expenses by sending a query without any filters
-  */
+   * the cursor filter is based on the same predicate as the sort filter,
+    that is if cursor is in descending order, then the sort filter follows suit.
+
+   * TODO: - add protection for quering other user's expenses by sending a query without any filters
+   */
+
   async list(
     limit: number,
     userId: string,
@@ -85,5 +88,74 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
     }).catch((err) => handleErrorMessages(err));
 
     return result;
+  }
+
+  /**
+   * returns a preview of the expenses incurred so far in the current month
+   * grouped as yesterday, today and currentMonth
+   */
+  async currentMonthPreview(userId: string): Promise<any> {
+    const date = new Date();
+
+    const y = date.getFullYear();
+
+    const m = date.getMonth();
+
+    const firstDay = new Date(y, m, 1);
+
+    const lastDay = new Date(y, m + 1, 0);
+
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+
+    const tomorrow = new Date();
+    tomorrow.setUTCHours(0, 0, 0, 0);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const yesterday = new Date();
+    yesterday.setUTCHours(0, 0, 0, 0);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const currentPreview = await ExpenseModel.aggregate([
+      {
+        $facet: {
+          month: [
+            {
+              $match: {
+                incurredOn: { $gte: firstDay, $lt: lastDay },
+                recordedBy: Types.ObjectId(userId),
+              },
+            },
+            {
+              $group: { _id: 'month', totalSpent: { $sum: '$amount' } },
+            },
+          ],
+          today: [
+            {
+              $match: {
+                incurredOn: { $gte: today, $lt: tomorrow },
+                recordedBy: Types.ObjectId(userId),
+              },
+            },
+            {
+              $group: { _id: 'today', totalSpent: { $sum: '$amount' } },
+            },
+          ],
+          yesterday: [
+            {
+              $match: {
+                incurredOn: { $gte: yesterday, $lt: today },
+                recordedBy: Types.ObjectId(userId),
+              },
+            },
+            {
+              $group: { _id: 'yesterday', totalSpent: { $sum: '$amount' } },
+            },
+          ],
+        },
+      },
+    ]);
+
+    return currentPreview;
   }
 }

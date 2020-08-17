@@ -13,7 +13,7 @@ describe('list expenses', () => {
   const app = new Application();
   let result: any;
   let cursor: string;
-  let lastExpense: any;
+  let expList: any[];
 
   before(async () => {
     result = await createUser(app, baseUrl, UserModelFixture.validUserObject);
@@ -24,7 +24,9 @@ describe('list expenses', () => {
       ...validExpenseObject,
       recordedBy: result.body.user.id,
     });
-    await MongooseAccess.mongooseConnection.models.Expense.create(expenses);
+    expList = await MongooseAccess.mongooseConnection.models.Expense.create(
+      expenses,
+    );
   });
 
   after(async () => {
@@ -55,7 +57,6 @@ describe('list expenses', () => {
         result.body.token,
         query,
       );
-      lastExpense = res.body.expenses[0];
 
       expect(res.status).to.be.equal(200);
       expect(res.body.hasNextPage).to.be.equal(false);
@@ -65,7 +66,7 @@ describe('list expenses', () => {
 
   describe('with the date filter provided', () => {
     it('a paginated expense list of not more than 10 should be returned inclusive of the startDate', async () => {
-      const startDate = `${lastExpense.incurredOn}`;
+      const startDate = `${expList[expList.length - 1].incurredOn}`;
       const query = `startDate=${startDate}&endDate=${startDate}`;
       const res = await listExpensesWithQueryStrs(
         app,
