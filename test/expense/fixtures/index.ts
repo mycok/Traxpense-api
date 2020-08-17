@@ -70,6 +70,17 @@ export function deleteExpense(
     .set('authorization', `Bearer ${token}`);
 }
 
+export async function previewExpenses(
+  app: any,
+  baseUrl: string,
+  token: string,
+) {
+  return await chaiWithHttp
+    .request(app.app)
+    .get(`${baseUrl}/expenses/current`)
+    .set('Authorization', `Bearer ${token}`);
+}
+
 export const validExpenseObject = {
   title: 'test-expense',
   amount: 23400,

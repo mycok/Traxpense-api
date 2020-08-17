@@ -13,6 +13,10 @@ expenseRouter
   .get(authenticate, ExpenseController.list);
 
 expenseRouter
+  .route('/api/v1/expenses/current')
+  .get(authenticate, ExpenseController.currentMonthPreview);
+
+expenseRouter
   .route('/api/v1/expenses/:expId')
   .get(authenticate, authorize, ExpenseController.read)
   .patch(authenticate, authorize, ExpenseController.update)
