@@ -6,7 +6,7 @@ import { expect, chaiWithHttp } from '..';
 import { generateToken } from '../../utils/authUtils';
 
 const baseUrl = '/api/v1';
-describe('read user by id', () => {
+describe('read user', () => {
   let user: IUserDocument;
   let token: string;
 

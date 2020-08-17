@@ -15,4 +15,5 @@ expenseRouter
 expenseRouter
   .route('/api/v1/expenses/:expId')
   .get(authenticate, authorize, ExpenseController.read)
-  .patch(authenticate, authorize, ExpenseController.update);
+  .patch(authenticate, authorize, ExpenseController.update)
+  .delete(authenticate, authorize, ExpenseController.delete);

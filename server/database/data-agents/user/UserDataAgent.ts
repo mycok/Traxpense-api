@@ -43,11 +43,11 @@ export class UserDataAgent extends DataAgent<IUserDocument> {
   }
 
   async delete(userId: string): Promise<any> {
-    const deletedResponse = await UserModel.deleteOne({
+    const result = await UserModel.deleteOne({
       _id: userId,
     }).catch((err) => handleErrorMessages(err));
 
-    return deletedResponse;
+    return result;
   }
 
   async reset(userId: IUserDocument, newPassword: string): Promise<any> {

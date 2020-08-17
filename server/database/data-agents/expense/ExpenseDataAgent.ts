@@ -79,7 +79,11 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
     return result;
   }
 
-  async delete(): Promise<any> {
-    return Promise.resolve(null);
+  async delete(expId: string): Promise<any> {
+    const result = await ExpenseModel.deleteOne({
+      _id: expId,
+    }).catch((err) => handleErrorMessages(err));
+
+    return result;
   }
 }
