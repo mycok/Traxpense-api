@@ -31,7 +31,7 @@ describe('scattered plot expense data', () => {
     );
   });
 
-  describe('when a request is made to view sccattered expenses data aggregated by month and amount for the specified period', () => {
+  describe('when a request is made to view scattered expenses data aggregated by month and amount for the specified period', () => {
     it('an aggregated expenses response should be returned', async () => {
       const res = await aggExpenses(
         app,

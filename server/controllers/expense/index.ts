@@ -208,6 +208,24 @@ export class ExpenseController {
     });
   }
 
+  static async avgExpBycategory(req: any, res: Response): Promise<any> {
+    const {
+      auth: { _id },
+      query: { startDate, endDate },
+    } = req;
+
+    const avgerageExpByCategory = await ExpenseController.expenseDataAgent.avgExpBycategory(
+      _id,
+      startDate,
+      endDate,
+    );
+
+    return res.status(200).json({
+      success: true,
+      avgerageExpByCategory,
+    });
+  }
+
   // helper methods
   static async getById(
     req: any,
