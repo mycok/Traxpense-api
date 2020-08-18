@@ -5,7 +5,7 @@ import { validExpenseObject, aggExpenses, createExpense } from './fixtures';
 import { expect } from '..';
 
 const baseUrl = '/api/v1';
-describe('preview aggregated expenses', () => {
+describe('aggregated expenses by category', () => {
   const app = new Application();
   let result: any;
 
@@ -25,7 +25,7 @@ describe('preview aggregated expenses', () => {
     );
   });
 
-  describe('when a request is made to preview aggregated expenses for the current month', () => {
+  describe('when a request is made to view expenses aggregated by category for the current month', () => {
     it('an aggregated expenses response should be returned', async () => {
       const res = await aggExpenses(
         app,
