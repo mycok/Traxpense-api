@@ -159,6 +159,21 @@ export class ExpenseController {
     });
   }
 
+  static async expensesByCategory(req: any, res: Response): Promise<any> {
+    const {
+      auth: { _id },
+    } = req;
+
+    const categoryExpAggregates = await ExpenseController.expenseDataAgent.expensesByCategory(
+      _id,
+    );
+
+    return res.status(200).json({
+      success: true,
+      categoryExpAggregates,
+    });
+  }
+
   // helper methods
   static async getById(
     req: any,

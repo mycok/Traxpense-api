@@ -70,14 +70,10 @@ export function deleteExpense(
     .set('authorization', `Bearer ${token}`);
 }
 
-export async function previewExpenses(
-  app: any,
-  baseUrl: string,
-  token: string,
-) {
+export async function aggExpenses(app: any, url: string, token: string) {
   return await chaiWithHttp
     .request(app.app)
-    .get(`${baseUrl}/expenses/current`)
+    .get(url)
     .set('Authorization', `Bearer ${token}`);
 }
 

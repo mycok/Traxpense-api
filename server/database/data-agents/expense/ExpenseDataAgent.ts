@@ -116,7 +116,7 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
     yesterday.setUTCHours(0, 0, 0, 0);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    const currentPreview = await ExpenseModel.aggregate([
+    const currentMonthPreviews = await ExpenseModel.aggregate([
       {
         $facet: {
           month: [
@@ -156,6 +156,68 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
       },
     ]);
 
-    return currentPreview;
+    return currentMonthPreviews;
+  }
+
+  async expensesByCategory(userId: string): Promise<any> {
+    const date = new Date();
+
+    const y = date.getFullYear();
+
+    const m = date.getMonth();
+
+    const firstDay = new Date(y, m, 1);
+
+    const lastDay = new Date(y, m + 1, 0);
+
+    const categoryExpAggregates = ExpenseModel.aggregate([
+      {
+        $facet: {
+          average: [
+            { $match: { recordedBy: Types.ObjectId(userId) } },
+            {
+              $group: {
+                _id: {
+                  category: '$category',
+                  month: { $month: '$incurredOn' },
+                },
+                totalSpent: { $sum: '$amount' },
+              },
+            },
+            {
+              $group: {
+                _id: '$_id.category',
+                avgSpent: { $avg: '$totalSpent' },
+              },
+            },
+            {
+              $project: { _id: '$_id', value: { average: '$avgSpent' } },
+            },
+          ],
+          total: [
+            {
+              $match: {
+                incurredOn: { $gte: firstDay, $lt: lastDay },
+                recordedBy: Types.ObjectId(userId),
+              },
+            },
+            {
+              $group: { _id: '$category', totalSpent: { $sum: '$amount' } },
+            },
+            {
+              $project: { _id: '$_id', value: { total: '$totalSpent' } },
+            },
+          ],
+        },
+      },
+      {
+        $project: { overview: { $setUnion: ['$average', '$total'] } },
+      },
+      { $unwind: '$overview' },
+      { $replaceRoot: { newRoot: '$overview' } },
+      { $group: { _id: '$_id', mergedValues: { $mergeObjects: '$value' } } },
+    ]);
+
+    return categoryExpAggregates;
   }
 }

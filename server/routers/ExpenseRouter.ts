@@ -17,6 +17,10 @@ expenseRouter
   .get(authenticate, ExpenseController.currentMonthPreview);
 
 expenseRouter
+  .route('/api/v1/expenses/by/category')
+  .get(authenticate, ExpenseController.expensesByCategory);
+
+expenseRouter
   .route('/api/v1/expenses/:expId')
   .get(authenticate, authorize, ExpenseController.read)
   .patch(authenticate, authorize, ExpenseController.update)
