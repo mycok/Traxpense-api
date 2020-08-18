@@ -174,6 +174,23 @@ export class ExpenseController {
     });
   }
 
+  static async scatteredPlotExpData(req: any, res: Response): Promise<any> {
+    const {
+      auth: { _id },
+      query: { period },
+    } = req;
+
+    const plotData = await ExpenseController.expenseDataAgent.scatteredPlotExpData(
+      _id,
+      period,
+    );
+
+    return res.status(200).json({
+      success: true,
+      plotData,
+    });
+  }
+
   // helper methods
   static async getById(
     req: any,

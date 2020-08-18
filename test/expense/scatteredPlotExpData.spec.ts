@@ -5,16 +5,22 @@ import { validExpenseObject, aggExpenses, createExpense } from './fixtures';
 import { expect } from '..';
 
 const baseUrl = '/api/v1';
-describe('aggregated expenses by category', () => {
+describe('scattered plot expense data', () => {
   const app = new Application();
   let result: any;
+  let expense: any;
 
   before(async () => {
     result = await createUser(app, baseUrl, UserModelFixture.validUserObject);
   });
 
   before(async () => {
-    await createExpense(app, baseUrl, result.body.token, validExpenseObject);
+    expense = await createExpense(
+      app,
+      baseUrl,
+      result.body.token,
+      validExpenseObject,
+    );
   });
 
   after(async () => {
@@ -25,11 +31,11 @@ describe('aggregated expenses by category', () => {
     );
   });
 
-  describe('when a request is made to view expenses aggregated by category for the current month', () => {
+  describe('when a request is made to view sccattered expenses data aggregated by month and amount for the specified period', () => {
     it('an aggregated expenses response should be returned', async () => {
       const res = await aggExpenses(
         app,
-        `${baseUrl}/expenses/by/category`,
+        `${baseUrl}/expenses/plot/?${expense.body.expense.incurredOn}`,
         result.body.token,
       );
 

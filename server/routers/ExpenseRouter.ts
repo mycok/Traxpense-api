@@ -21,6 +21,10 @@ expenseRouter
   .get(authenticate, ExpenseController.expensesByCategory);
 
 expenseRouter
+  .route('/api/v1/expenses/plot')
+  .get(authenticate, ExpenseController.scatteredPlotExpData);
+
+expenseRouter
   .route('/api/v1/expenses/:expId')
   .get(authenticate, authorize, ExpenseController.read)
   .patch(authenticate, authorize, ExpenseController.update)
