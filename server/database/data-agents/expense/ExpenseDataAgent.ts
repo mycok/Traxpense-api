@@ -259,4 +259,36 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
 
     return monthlyTotals;
   }
+
+  async avgExpBycategory(
+    userId: string,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<any> {
+    const firstDay = new Date(startDate);
+    const lastDay = new Date(endDate);
+
+    const avgerageExpByCategory = await ExpenseModel.aggregate([
+      {
+        $match: {
+          incurredOn: { $gte: firstDay, $lte: lastDay },
+          recordedBy: Types.ObjectId(userId),
+        },
+      },
+      {
+        $group: {
+          _id: { category: '$category' },
+          totalSpent: { $sum: '$amount' },
+        },
+      },
+      {
+        $group: { _id: '$_id.category', avgSpent: { $avg: '$totalSpent' } },
+      },
+      {
+        $project: { x: '$_id', y: '$avgSpent' },
+      },
+    ]);
+
+    return avgerageExpByCategory;
+  }
 }

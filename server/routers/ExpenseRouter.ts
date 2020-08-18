@@ -29,6 +29,10 @@ expenseRouter
   .get(authenticate, ExpenseController.annualExpData);
 
 expenseRouter
+  .route('/api/v1/expenses/category/averages')
+  .get(authenticate, ExpenseController.avgExpBycategory);
+
+expenseRouter
   .route('/api/v1/expenses/:expId')
   .get(authenticate, authorize, ExpenseController.read)
   .patch(authenticate, authorize, ExpenseController.update)

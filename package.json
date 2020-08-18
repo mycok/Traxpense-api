@@ -4,6 +4,7 @@
   "description": "skeleton setup for MERN projects",
   "main": "./server/index.ts",
   "scripts": {
+    "preinstall": "yarn global add rimraf",
     "test": "dotenv mocha",
     "coverage": "nyc mocha",
     "test:coverage": "dotenv yarn run coverage",

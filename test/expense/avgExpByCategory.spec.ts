@@ -5,7 +5,7 @@ import { validExpenseObject, aggExpenses, createExpense } from './fixtures';
 import { expect } from '..';
 
 const baseUrl = '/api/v1';
-describe('annual expense data', () => {
+describe('average expenditure data by category', () => {
   const app = new Application();
   let result: any;
   let expense: any;
@@ -31,12 +31,17 @@ describe('annual expense data', () => {
     );
   });
 
-  describe('when a request is made to view annual expenses data aggregated by month and amount', () => {
+  describe('when a request is made to view monthly average expense data for the specified period', () => {
     it('an aggregated expenses response should be returned', async () => {
-      const year = new Date(expense.body.expense.incurredOn).getFullYear();
+      const startDate = new Date(expense.body.expense.incurredOn);
+      const endDate = new Date(
+        startDate.getFullYear(),
+        startDate.getMonth() + 1,
+        startDate.getDay() + 5,
+      );
       const res = await aggExpenses(
         app,
-        `${baseUrl}/expenses/annual/?year=${year}`,
+        `${baseUrl}/expenses/category/averages/?startDate=${startDate}&endDate=${endDate}`,
         result.body.token,
       );
 
