@@ -220,4 +220,28 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
 
     return categoryExpAggregates;
   }
+
+  async scatteredPlotExpData(userId: string, period: Date): Promise<any> {
+    const date = new Date(period);
+
+    const y = date.getFullYear();
+
+    const m = date.getMonth();
+
+    const firstDay = new Date(y, m, 1);
+
+    const lastDay = new Date(y, m + 1, 0);
+
+    const plotData = ExpenseModel.aggregate([
+      {
+        $match: {
+          incurredOn: { $gte: firstDay, $lt: lastDay },
+          recordedBy: Types.ObjectId(userId),
+        },
+      },
+      { $project: { x: { daysOfMonth: '$incurredOn' }, y: '$amount' } },
+    ]);
+
+    return plotData;
+  }
 }
