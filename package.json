@@ -6,7 +6,7 @@
   "scripts": {
     "test": "dotenv mocha",
     "coverage": "nyc mocha",
-    "test:coverage": "yarn run coverage",
+    "test:coverage": "dotenv yarn run coverage",
     "clean": "rimraf ./dist && rimraf reports",
     "build": "yarn run clean && tsc",
     "start": "node ./dist/index.js",

@@ -5,7 +5,7 @@ import { validExpenseObject, aggExpenses, createExpense } from './fixtures';
 import { expect } from '..';
 
 const baseUrl = '/api/v1';
-describe('scattered plot expense data', () => {
+describe('annual expense data', () => {
   const app = new Application();
   let result: any;
   let expense: any;
@@ -33,9 +33,10 @@ describe('scattered plot expense data', () => {
 
   describe('when a request is made to view sccattered expenses data aggregated by month and amount for the specified period', () => {
     it('an aggregated expenses response should be returned', async () => {
+      const year = new Date(expense.body.expense.incurredOn).getFullYear();
       const res = await aggExpenses(
         app,
-        `${baseUrl}/expenses/plot/?period=${expense.body.expense.incurredOn}`,
+        `${baseUrl}/expenses/annual/?year=${year}`,
         result.body.token,
       );
 
