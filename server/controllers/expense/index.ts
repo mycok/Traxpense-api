@@ -191,6 +191,23 @@ export class ExpenseController {
     });
   }
 
+  static async annualExpData(req: any, res: Response): Promise<any> {
+    const {
+      auth: { _id },
+      query: { year },
+    } = req;
+
+    const annualExpData = await ExpenseController.expenseDataAgent.annualExpData(
+      _id,
+      year,
+    );
+
+    return res.status(200).json({
+      success: true,
+      annualExpData,
+    });
+  }
+
   // helper methods
   static async getById(
     req: any,

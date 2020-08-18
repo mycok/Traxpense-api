@@ -4,6 +4,7 @@ import { IExpenseDocument, ExpenseModel } from '../../data-abstracts';
 import { handleErrorMessages } from '../../../../utils/dbErrorHandler';
 import { DataAgent } from '../../../../utils/DataAgent';
 
+// TODO: add error handling for all aggregate data handlers
 export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
   async create(
     expenseData: IExpenseDocument,
@@ -96,19 +97,15 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
    */
   async currentMonthPreview(userId: string): Promise<any> {
     const date = new Date();
-
     const y = date.getFullYear();
-
     const m = date.getMonth();
-
     const firstDay = new Date(y, m, 1);
-
     const lastDay = new Date(y, m + 1, 0);
-
     const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
 
+    today.setUTCHours(0, 0, 0, 0);
     const tomorrow = new Date();
+
     tomorrow.setUTCHours(0, 0, 0, 0);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
@@ -161,16 +158,12 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
 
   async expensesByCategory(userId: string): Promise<any> {
     const date = new Date();
-
     const y = date.getFullYear();
-
     const m = date.getMonth();
-
     const firstDay = new Date(y, m, 1);
-
     const lastDay = new Date(y, m + 1, 0);
 
-    const categoryExpAggregates = ExpenseModel.aggregate([
+    const categoryExpAggregates = await ExpenseModel.aggregate([
       {
         $facet: {
           average: [
@@ -223,16 +216,12 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
 
   async scatteredPlotExpData(userId: string, period: Date): Promise<any> {
     const date = new Date(period);
-
     const y = date.getFullYear();
-
     const m = date.getMonth();
-
     const firstDay = new Date(y, m, 1);
-
     const lastDay = new Date(y, m + 1, 0);
 
-    const plotData = ExpenseModel.aggregate([
+    const plotData = await ExpenseModel.aggregate([
       {
         $match: {
           incurredOn: { $gte: firstDay, $lt: lastDay },
@@ -243,5 +232,31 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
     ]);
 
     return plotData;
+  }
+
+  async annualExpData(userId: string, year: number): Promise<any> {
+    const y = year;
+    const firstDay = new Date(y, 0, 1);
+    const lastDay = new Date(y, 12, 0);
+
+    const monthlyTotals = await ExpenseModel.aggregate([
+      {
+        $match: {
+          incurredOn: { $gte: firstDay, $lt: lastDay },
+          recordedBy: Types.ObjectId(userId),
+        },
+      },
+      {
+        $group: {
+          _id: { $month: '$incurredOn' },
+          totalSpent: { $sum: '$amount' },
+        },
+      },
+      {
+        $project: { x: '$_id', y: '$totalSpent' },
+      },
+    ]);
+
+    return monthlyTotals;
   }
 }
