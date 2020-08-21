@@ -1,7 +1,7 @@
 {
   "name": "tranxpence-api",
   "version": "1.0.0",
-  "description": "skeleton setup for MERN projects",
+  "description": "an expense tracker and analyer web aapp",
   "main": "./server/index.ts",
   "engines": {
     "node": "14.3.0"
@@ -10,7 +10,7 @@
     "preinstall": "yarn global add rimraf",
     "test": "dotenv mocha",
     "coverage": "nyc mocha",
-    "test:coverage": "dotenv yarn run coverage",
+    "test:coverage": "yarn run coverage",
     "clean": "rimraf ./dist",
     "build": "yarn run clean && tsc",
     "start": "node ./dist/server/index.js",
