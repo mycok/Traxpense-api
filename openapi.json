@@ -1,0 +1,1099 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Traxpense",
+      "version": "1.0.0",
+      "contact": {
+        "name": "myco",
+        "email": "mycovan@gmail.com"
+      }
+    },
+    "servers": [
+      {
+        "url": "https://traxpense-api.herokuapp.com"
+      }
+    ],
+    "components": {
+      "responses": {
+        "User Created": {
+          "description": "user created",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/Retrieved User"
+                    },
+                    "token": {
+                        "type": "string"
+                    }
+                }
+              },
+              "example": {
+                "success": true,
+                "user": {
+                    "id": "5f3da3f7559739b5246ewcs455",
+                    "username": "tester",
+                    "email": "tester@gmail.com",
+                    "profile": {}
+                },
+                "token": "eyJhbGciOiJIUzI1.NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjNkYTNmNzU1OTc"
+              }
+            }
+          }
+        },
+        "Signin": {
+            "description": "successfully signedIn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                      "success": {
+                          "type": "boolean"
+                      },
+                      "user": {
+                          "$ref": "#/components/schemas/Retrieved User"
+                      },
+                      "token": {
+                          "type": "string"
+                      }
+                  }
+                },
+                "example": {
+                    "success": true,
+                    "user": {
+                        "id": "5f3da3f7559739b5246ewcs455",
+                        "username": "tester",
+                        "email": "tester@gmail.com",
+                        "profile": {}
+                    },
+                    "token": "eyJhbGciOiJIUzI1.NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjNkYTNmNzU1OTc"
+                }
+              }
+            }
+        },
+        "Users": {
+            "description": "fetch users",
+            "content": {
+              "application/json": {
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "success": {
+                            "type": "boolean"
+                        },
+                        "count": {
+                            "type": "number"
+                        },
+                        "users": {
+                            "type": "array"
+                        }
+                    }
+                  },
+                  "example": {
+                    "success": true,
+                    "count": 2,
+                    "users": [
+                        {
+                            "_id": "5f32f9e4f6bf18r5614f2b8295",
+                            "username": "test-1",
+                            "email": "test1@gmail.com"
+                        },
+                        {
+                            "_id": "5f3da3f7559739b768rt6e3285",
+                            "username": "test-2",
+                            "email": "test2@gmail.com"
+                        }
+                    ]
+                  }
+                }
+              }
+        },
+        "Read User": {
+            "description": "single user object",
+            "content": {
+              "application/json": {
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "success": {
+                            "type": "boolean"
+                        },
+                        "user": {
+                            "$ref": "#/components/schemas/Retrieved User"
+                        }
+                    }
+                  },
+                  "example": {
+                    "success": true,
+                    "user": {
+                        "id": "5f3da3f7559739b5246ewcs455",
+                        "username": "tester",
+                        "email": "tester@gmail.com",
+                        "profile": {}
+                    }
+                }
+                }
+              }
+        },
+        "Delete": {
+            "description": "delete user",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "success": {
+                                "type": "boolean"
+                            },
+                            "deletedResponse": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "example": {
+                        "success": true,
+                        "deletedResponse": {
+                            "n": 1,
+                            "ok": 1,
+                            "deletedCount": 1
+                        }
+                    }
+                }
+            }
+        },
+        "Read Expense": {
+          "description": "single expense object",
+            "content": {
+              "application/json": {
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "success": {
+                            "type": "boolean"
+                        },
+                        "expense": {
+                            "$ref": "#/components/schemas/Retrieved Expense"
+                        }
+                    }
+                  },
+                  "example": {
+                    "success": true,
+                    "expense": {
+                      "id": "5f3ecf538fb5540548592777",
+                      "title": "Denim Jeans",
+                      "amount": 3400,
+                      "category": "clothes",
+                      "incurredOn": "2020-08-20T19:30:27.008Z",
+                      "createdAt": "2020-08-20T19:30:27.011Z"
+                  }
+                }
+                }
+              }
+        },
+        "Expenses": {
+          "description": "fetch expenses",
+          "content": {
+            "application/json": {
+              "schema": {
+                  "type": "object",
+                  "properties": {
+                      "success": {
+                          "type": "boolean"
+                      },
+                      "count": {
+                          "type": "number"
+                      },
+                      "expenses": {
+                          "type": "array"
+                      }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "count": 2,
+                  "expenses": [
+                    {
+                      "_id": "5f3aa3387aad89219fbe3b59",
+                      "title": "Denim Jeans",
+                      "amount": 3400,
+                      "category": "clothes",
+                      "recordedBy": null,
+                      "incurredOn": "2020-08-17T15:33:12.551Z",
+                      "createdAt": "2020-08-17T15:33:12.558Z"
+                  },
+                  {
+                      "_id": "5f39d0627e448368c01edf4f",
+                      "title": "Denim Jeans",
+                      "amount": 3400,
+                      "category": "clothes",
+                      "recordedBy": null,
+                      "incurredOn": "2020-08-17T00:33:38.058Z",
+                      "createdAt": "2020-08-17T00:33:38.061Z"
+                  }
+                  ]
+                }
+              }
+            }
+        },
+        "Current Month Expenses": {
+          "description": "current month expenses aggreggate",
+          "content": {
+            "application/json": {
+              "schema": {
+                  "type": "object",
+                  "properties": {
+                      "success": {
+                          "type": "boolean"
+                      },
+                      "expensePreview": {
+                          "type": "object",
+                          "properties": {
+                            "month": {
+                              "type": "object",
+                              "properties": {
+                                "_id":"string",
+                                "totalSpent": "number"
+                              }
+                            },
+                            "today": {
+                              "type": "object",
+                              "properties": {
+                                "_id":"string",
+                                "totalSpent": "number"
+                              }
+                            },
+                            "yesterday": {
+                              "type": "object",
+                              "properties": {
+                                "_id":"string",
+                                "totalSpent": "number"
+                              }
+                            }
+                          }
+                      }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "expensePreview": {
+                      "month": {
+                          "_id": "month",
+                          "totalSpent": 3400000
+                      },
+                      "today": {
+                          "_id": "today",
+                          "totalSpent": 89700
+                      },
+                      "yesterday": {
+                        "_id": "yesterday",
+                        "totalSpent": 3400
+                    }
+                  }
+                }
+              }
+          }
+        },
+        "Average Total Expenditure": {
+          "description": "average and total expenditure for the current month",
+          "content": {
+            "application/json": {
+              "schema": {
+                  "type": "object",
+                  "properties": {
+                      "success": {
+                          "type": "boolean"
+                      },
+                      "categoryExpAggregates": {
+                          "type": "array"
+                        }
+                    }
+                  },
+                  "example": {
+                    "success": true,
+                    "categoryExpAggregates": [
+                        {
+                            "_id": "clothes",
+                            "mergedValues": {
+                                "average": 3400,
+                                "total": 3400
+                            }
+                        }
+                    ]
+                  }
+                }
+              }
+        },
+        "Not Found": {
+            "description": "User Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Custom Error"
+                },
+                "example": {
+                  "success": false,
+                  "status": 404,
+                  "failedOperation": "getById",
+                  "message": "resource not found",
+                  "args": []
+              }
+              }
+            }
+        },
+        "Bad Request": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Custom Error"
+                },
+                "example": {
+                  "success": false,
+                  "status": 400,
+                  "failedOperation": "operation-name",
+                  "message": "error message",
+                  "args": []
+                  }
+              }
+            }
+        },
+        "Content Header Error": {
+              "description": "Unsupported content-type header type",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  },
+                  "example": {
+                      "success": false,
+                      "message": "The authorization header must be set"
+                  }
+                }
+              }
+        },
+        "Unauthorized": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "success": false,
+                  "message": "jwt expired"
+              }
+              }
+            }
+        },
+        "Forbidden": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "success": false,
+                  "message": "You are not authorized to perform this action"
+              }
+              }
+            }
+        }
+    },
+    "schemas": {
+        "Profile": {
+          "title": "profile schema",
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "object",
+              "properties": {
+                "first": {
+                  "type": "string"
+                },
+                "middle": {
+                  "type": "string"
+                },
+                "last": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "bio": {
+              "type": "string"
+            },
+            "summary": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "Retrieved User": {
+          "title": "retrieved user schema",
+          "description": "A user object with the password removed",
+          "properties": {
+            "id": {
+                "type": "string"
+            },
+            "username": {
+                "type": "string"
+              },
+            "email": {
+                "type": "string"
+            },
+            "profile": {
+                 "$ref": "#/components/schemas/Profile"
+            }
+          },
+          "additionalProperties": false
+        },
+        "Create User": {
+            "title": "create user schema",
+            "properties": {
+              "username": {
+                  "type": "string"
+                },
+              "email": {
+                  "type": "string",
+                  "format": "email"
+              },
+              "password": {
+                  "type": "string",
+                  "pattern": "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/"
+              },
+              "profile": {
+                   "$ref": "#/components/schemas/Profile"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+                    "username",
+                    "email",
+                    "password"
+            ]
+        },
+        "Update User": {
+            "title": "update user schema",
+            "properties": {
+              "username": {
+                  "type": "string"
+                },
+              "email": {
+                  "type": "string",
+                  "format": "email"
+              },
+              "profile": {
+                   "$ref": "#/components/schemas/Profile"
+              }
+            },
+            "additionalProperties": false
+        },
+        "Create Expense": {
+            "title": "create expense schema",
+            "type": "object",
+            "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "category": {
+                  "type": "string"
+                },
+                "notes": {
+                  "type": "string"
+                }
+              },
+            "required": ["title", "amount", "category"],
+            "additionalProperties": false
+        },
+        "Retrieved Expense": {
+            "title": "retrieved expense schema",
+            "type": "object",
+            "properties": {
+                "_id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "category": {
+                  "type": "string"
+                },
+                "notes": {
+                  "type": "string"
+                },
+                "incurredOn": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+            "additionalProperties": false
+        },
+        "Update Expense": {
+          "title": "update expense schema",
+          "type": "object",
+          "properties": {
+              "title": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number",
+                "minimum": 0
+              },
+              "category": {
+                "type": "string"
+              },
+              "notes": {
+                "type": "string"
+              },
+              "incurredOn": {
+                "type": "string"
+              }
+            },
+          "additionalProperties": false
+        },
+        "Custom Error": {
+            "title": "custom error class",
+            "type": "object",
+            "properties": {
+              "success": {
+                  "type": "boolean",
+                  "default": false
+              },
+              "status": {
+                  "type": "number"
+              },
+              "failedOperation": {
+                  "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "args": {
+                  "type": "array"
+              }
+            }
+        },
+        "Error": {
+            "title": "error",
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean",
+                    "default": false
+                },
+              "message": {
+                    "type": "string"
+              }
+            }
+        }
+      },
+      "securitySchemes": {
+        "token": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }    
+    },
+    "paths": {
+      "/signin": {
+        "post": {
+          "tags": [
+            "auth"
+          ],
+          "summary": "perform password-based authentication",
+          "description": "returns a user object along with a JWT token upon success",
+          "requestBody": {
+            "description": "user credentials",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "password": {
+                      "type": "string",
+                      "pattern": "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/"
+                    }
+                  }
+                },
+                "example": {
+                  "email": "test@email.com",
+                  "password": "passWord$65"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/Signin"
+            },
+            "400": {
+              "$ref": "#/components/responses/Bad Request"
+            },
+            "401": {
+              "$ref": "#/components/responses/Unauthorized"
+            },
+            "404": {
+              "$ref": "#/components/responses/Not Found"
+            },
+            "500": {
+              "$ref": "#/components/responses/Generic Server Error"
+            }
+          }
+        }
+      },
+      "/users": {
+        "post": {
+          "tags": [
+            "users"
+          ],
+          "summary": "create a new user",
+          "description": "new user is created and returned.\n",
+          "requestBody": {
+            "description": "new user object",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Create User"
+                },
+                "example": {
+                    "username": "test-user",
+                    "email": "test@email.com",
+                    "password": "passWord$65",
+                    "profile": {
+                      "bio": "Aspiring software developer with intense passion for javascript",
+                      "summary": "Software developer",
+                      "name": {
+                        "first": "Myko",
+                        "last": "kibuu"
+                      }
+                    }
+                  }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "$ref": "#/components/responses/User Created"
+            },
+            "400": {
+              "$ref": "#/components/responses/Bad Request"
+            }
+          }
+        },
+        "get": {
+          "tags": [
+            "users"
+          ],
+          "summary": "fetch all users",
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/Users"
+            }
+          }
+        }
+      },
+      "/users/{userId}": {
+        "get": {
+          "tags": [
+            "users"
+          ],
+          "security": [
+            {
+              "token": []
+            }
+          ],
+          "summary": "fetch a specific user",
+          "description": "returns a user that matches the provided userId",
+          "parameters": [
+            {
+              "name": "userId",
+              "in": "path",
+              "description": "The _id of the user to retrieve from the database",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/Read User"
+            },
+            "400": {
+              "$ref": "#/components/responses/Bad Request"
+            },
+            "404": {
+              "$ref": "#/components/responses/Not Found"
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "users"
+          ],
+          "summary": "delete a specific user",
+          "description": "delete a user matching the provided ID",
+          "security": [
+            {
+              "token": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "userId",
+              "in": "path",
+              "description": "The ID of the user to be deleted",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/Delete"
+            },
+            "400": {
+              "$ref": "#/components/responses/Bad Request"
+            },
+            "401": {
+              "$ref": "#/components/responses/Unauthorized"
+            },
+            "403": {
+              "$ref": "#/components/responses/Forbidden"
+            },
+            "404": {
+              "$ref": "#/components/responses/Not Found"
+            },
+            "415": {
+              "$ref": "#/components/responses/Content Header Error"
+            }
+          }
+        },
+        "patch": {
+            "tags": [
+                "users"
+              ],
+              "security": [
+                {
+                  "token": []
+                }
+              ],
+              "summary": "update specific a user",
+              "description": "user object is updated with the new payload data\n",
+              "parameters": [
+                {
+                  "name": "userId",
+                  "in": "path",
+                  "description": "The ID of the user whose profile is to be updated",
+                  "required": true,
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "requestBody": {
+                "description": "update User object",
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Update User"
+                    },
+                    "example": {
+                        "email": "test43@gmail.com",
+                        "username": "super-tester"
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "$ref": "#/components/responses/Read User"
+                },
+                "400": {
+                  "$ref": "#/components/responses/Bad Request"
+                },
+                "401": {
+                  "$ref": "#/components/responses/Unauthorized"
+                },
+                "403": {
+                  "$ref": "#/components/responses/Forbidden"
+                },
+                "404": {
+                  "$ref": "#/components/responses/Not Found"
+                },
+                "415": {
+                  "$ref": "#/components/responses/Content Header Error"
+                }
+            }   
+        }
+      },
+      "/expenses": {
+        "post": {
+            "tags": [ "expenses"],
+            "summary": "creates a new expense",
+            "description": "a new expense is created and returned.\n",
+            "security": [
+                {
+                  "token": []
+                }
+              ],
+            "requestBody": {
+                "description": "new Expense object",
+                "required": true,
+                "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/Create Expense"
+                    },
+                    "example": {
+                        "title": "test-expense",
+                        "amount": 450000,
+                        "category": "e-learning"
+                    }
+                }
+            }   
+        },
+        "responses": {
+            "201": {
+                "$ref": "#/components/responses/Read Expense"
+            },
+              "400": {
+                "$ref": "#/components/responses/Bad Request"
+            }
+        }
+        },
+        "get": {
+          "tags": [ "expenses"],
+          "summary": "fetch all expenses",
+          "description": "if a date predicate is provided, a paginated list of expenses is returned matching the predicate, else all expenses are returned\n",
+          "security": [
+              {
+                "token": []
+              }
+            ],
+            "parameters": [
+              {
+                "name": "cursor",
+                "in": "query",
+                "description": " an id used to fetch the next list of paginated expenses",
+                "required": false,
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "startDate",
+                "in": "query",
+                "description": " a date for which to start the search",
+                "required": false,
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "endDate",
+                "in": "query",
+                "description": " a date for which to end the search",
+                "required": false,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                  "$ref": "#/components/responses/Expenses"
+              },
+                "400": {
+                  "$ref": "#/components/responses/Bad Request"
+              }
+          }
+
+        }
+      },
+      "/expenses/{expId}": {
+        "get": {
+          "tags": [
+            "expenses"
+          ],
+          "security": [
+            {
+              "token": []
+            }
+          ],
+          "summary": "fetch a specific expense",
+          "description": "returns an expense that matches the provided expId",
+          "parameters": [
+            {
+              "name": "expId",
+              "in": "path",
+              "description": "The _id of the expense to retrieve",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/Read Expense"
+            },
+            "400": {
+              "$ref": "#/components/responses/Bad Request"
+            },
+            "404": {
+              "$ref": "#/components/responses/Not Found"
+            }
+          }
+        },
+        "patch": {
+            "tags": [
+              "expenses"
+            ],
+            "security": [
+              {
+                "token": []
+              }
+            ],
+            "summary": "update a specific expense",
+            "description": "updates an expense that matches the provided expId",
+            "parameters": [
+              {
+                "name": "expId",
+                "in": "path",
+                "description": "The _id of the expense to update",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            ],
+            "requestBody": {
+              "description": "update expense object",
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Update Expense"
+                    },
+                    "example": {
+                        "title": "Denim Jeans",
+                        "amount": 3400
+                    }
+                  }
+                }
+            },
+            "responses": {
+              "200": {
+                "$ref": "#/components/responses/Read Expense"
+              },
+              "400": {
+                "$ref": "#/components/responses/Bad Request"
+              },
+              "404": {
+                "$ref": "#/components/responses/Not Found"
+              }
+            }
+        },
+        "delete": {
+          "tags": [
+            "expenses"
+          ],
+          "security": [
+            {
+              "token": []
+            }
+          ],
+          "summary": "delete a specific expense",
+          "description": "deletes an expense that matches the provided expId",
+          "parameters": [
+            {
+              "name": "expId",
+              "in": "path",
+              "description": "The _id of the expense to delete",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/Delete"
+            },
+            "400": {
+              "$ref": "#/components/responses/Bad Request"
+            },
+            "404": {
+              "$ref": "#/components/responses/Not Found"
+            }
+          }
+        }
+      },
+      "/expenses/current": {
+        "get": {
+          "tags": [
+            "expenses"
+          ],
+          "security": [
+            {
+              "token": []
+            }
+          ],
+          "summary": "current month expenses overview",
+          "description": "returns an expenses overview for the current month",
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/Current Month Expenses"
+            }
+          }
+        }
+      },
+      "/expenses/by/category": {
+        "get": {
+          "tags": [
+            "expenses"
+          ],
+          "security": [
+            {
+              "token": []
+            }
+          ],
+          "summary": "current month average and total expenditure by category",
+          "description": "returns current month average and total expenditure by category",
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/Average Total Expenditure"
+            }
+          }
+        }
+      }
+  }
+}
