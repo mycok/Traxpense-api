@@ -3,9 +3,13 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
+import swaggerUi from 'swagger-ui-express';
+
 import { userRouter } from '../routers/UserRouter';
 import { authRouter } from '../routers/AuthRouter';
 import { expenseRouter } from '../routers/ExpenseRouter';
+
+import documentation from '../../openapi.json';
 
 export class Application {
   app: express.Express;
@@ -24,6 +28,7 @@ export class Application {
     this.app.use(helmet());
     this.app.use(this.clientErrorHandler);
     this.app.use('/dist', express.static(path.join(process.cwd(), 'dist')));
+    this.app.use('/swagger', swaggerUi.serve, swaggerUi.setup(documentation));
   }
 
   private RouterSetup() {
