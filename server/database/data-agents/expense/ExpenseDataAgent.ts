@@ -15,10 +15,10 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
   }
 
   /**
-   * we use cursor based pagination along with a date filter to return
+   * Uses cursor based pagination along with a date filter to return
    a paginated list filtered by date, ordered by _id and in a descending order.
 
-   * the cursor filter is based on the same predicate as the sort filter,
+   * The cursor filter is based on the same predicate as the sort filter,
     that is if cursor is in descending order, then the sort filter follows suit.
 
    * TODO: - add protection for quering other user's expenses by sending a query without any filters
@@ -92,8 +92,10 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
   }
 
   /**
-   * returns a preview of the expenses incurred so far in the current month
-   * grouped as yesterday, today and currentMonth
+   * @param userId
+   * @returns
+   *  A preview of the expenses incurred so far in the current month
+   *  grouped as yesterday, today and currentMonth
    */
   async currentMonthPreview(userId: string): Promise<any> {
     const date = new Date();
@@ -214,6 +216,12 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
     return categoryExpAggregates;
   }
 
+  /**
+   * @param userId
+   * @param period
+   * @returns
+   * Total expenditure by date for a specific month
+   */
   async scatteredPlotExpData(userId: string, period: Date): Promise<any> {
     const date = new Date(period);
     const y = date.getFullYear();
@@ -234,6 +242,13 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
     return plotData;
   }
 
+  /**
+   *
+   * @param userId
+   * @param year
+   * @returns
+   * Annual total monthly expenditure
+   */
   async annualExpData(userId: string, year: number): Promise<any> {
     const y = year;
     const firstDay = new Date(y, 0, 1);
@@ -260,6 +275,14 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
     return monthlyTotals;
   }
 
+  /**
+   *
+   * @param userId
+   * @param startDate
+   * @param endDate
+   * @returns
+   * Average total expenditure by category for the specified period
+   */
   async avgExpBycategory(
     userId: string,
     startDate: Date,
