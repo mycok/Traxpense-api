@@ -329,6 +329,92 @@
                 }
               }
         },
+        "Scattered Plot Exp Data": {
+          "description": "total expenditure by date for a specific month",
+          "content": {
+            "application/json": {
+              "schema": {
+                  "type": "object",
+                  "properties": {
+                      "success": {
+                          "type": "boolean"
+                      },
+                      "plotData": {
+                          "type": "array"
+                        }
+                    }
+                  },
+                  "example": {
+                    "success": true,
+                    "plotData": [
+                        {
+                            "_id": "5f3ecf538fb5540548592777",
+                            "x": {
+                                "daysOfMonth": "2020-08-20T19:30:27.008Z"
+                            },
+                            "y": 3400
+                        }
+                    ]
+                  }
+                }
+              }
+        },
+        "Annual Monthly Total Exp": {
+          "description": "annual total monthly expenditure",
+          "content": {
+            "application/json": {
+              "schema": {
+                  "type": "object",
+                  "properties": {
+                      "success": {
+                          "type": "boolean"
+                      },
+                      "annualExpData": {
+                          "type": "array"
+                        }
+                    }
+                  },
+                  "example": {
+                    "success": true,
+                    "annualExpData": [
+                        {
+                            "_id": 8,
+                            "x": 8,
+                            "y": 3400
+                        }
+                    ]
+                  }
+                }
+              }
+        },
+        "Average Total Exp By Category": {
+          "description": "Average total expenditure by category for the specified period",
+          "content": {
+            "application/json": {
+              "schema": {
+                  "type": "object",
+                  "properties": {
+                      "success": {
+                          "type": "boolean"
+                      },
+                      "avgerageExpByCategory": {
+                          "type": "array"
+                        }
+                    }
+                  },
+                  "example": {
+                    "success": true,
+                    "avgerageExpByCategory": [
+                        {
+                            "_id": "clothes",
+                            "x": "clothes",
+                            "y": 3400
+                        }
+                    ]
+                  }
+                }
+              }
+        },
         "Not Found": {
             "description": "User Not Found",
             "content": {
@@ -1091,6 +1177,105 @@
           "responses": {
             "200": {
               "$ref": "#/components/responses/Average Total Expenditure"
+            }
+          }
+        }
+      },
+      "/expenses/plot": {
+        "get": {
+          "tags": [
+            "expenses"
+          ],
+          "security": [
+            {
+              "token": []
+            }
+          ],
+          "summary": "total expenditure by date for a specific month",
+          "description": "returns total expenditure by date for a specific month",
+          "parameters": [
+            {
+              "name": "period",
+              "in": "query",
+              "description": "date that is used to filter the expenses for that specific month",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/Scattered Plot Exp Data"
+            }
+          }
+        }
+      },
+      "/expenses/annual": {
+        "get": {
+          "tags": [
+            "expenses"
+          ],
+          "security": [
+            {
+              "token": []
+            }
+          ],
+          "summary": "annual total monthly expenditure",
+          "description": "returns annual total monthly expenditure",
+          "parameters": [
+            {
+              "name": "year",
+              "in": "query",
+              "description": "year that is used to filter the expenses",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/Annual Monthly Total Exp"
+            }
+          }
+        }
+      },
+      "/expenses/category/averages": {
+        "get": {
+          "tags": [
+            "expenses"
+          ],
+          "security": [
+            {
+              "token": []
+            }
+          ],
+          "summary": "Average total expenditure by category for the specified period",
+          "description": "returns Average total expenditure by category for the specified period",
+          "parameters": [
+            {
+              "name": "startDate",
+              "in": "query",
+              "description": "date used to filter the expenses",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "endDate",
+              "in": "query",
+              "description": "date used to filter the expenses",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/Average Total Exp By Category"
             }
           }
         }
