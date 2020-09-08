@@ -1,19 +1,16 @@
 import { Types } from 'mongoose';
 
 import { IExpenseDocument, ExpenseModel } from '../../data-abstracts';
-import { handleErrorMessages } from '../../../../utils/dbErrorHandler';
-import { DataAgent } from '../../../../utils/DataAgent';
+import { BaseDataAgent } from '../../../../utils/BaseDataAgent';
 
 // TODO: add error handling for all aggregate data handlers
-export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
-  async create(
-    expenseData: IExpenseDocument,
-  ): Promise<IExpenseDocument | string> {
-    const result = await ExpenseModel.create(expenseData).catch((err) => handleErrorMessages(err));
+export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
+  private expenseModel: any;
 
-    return result;
+  constructor() {
+    super(ExpenseModel);
+    this.expenseModel = ExpenseModel;
   }
-
   /**
    * Uses cursor based pagination along with a date filter to return
    a paginated list filtered by date, ordered by _id and in a descending order.
@@ -21,7 +18,8 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
    * The cursor filter is based on the same predicate as the sort filter,
     that is if cursor is in descending order, then the sort filter follows suit.
 
-   * TODO: - add protection for quering other user's expenses by sending a query without any filters
+   * TODO: - add protection for querying other user's expenses
+    by sending a query without any filters
    */
 
   async list(
@@ -46,10 +44,11 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
         ],
       };
     }
-    const expenses: IExpenseDocument[] = await ExpenseModel.find({
-      ...dateQuery,
-      ...cursorQuery,
-    })
+    const expenses: IExpenseDocument[] = await this.expenseModel
+      .find({
+        ...dateQuery,
+        ...cursorQuery,
+      })
       .populate('recordedBy', 'username email')
       .limit(limit + 1)
       .sort({ incurredOn: -1 })
@@ -58,35 +57,10 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
     return expenses;
   }
 
-  async getById(expId: string): Promise<IExpenseDocument | string> {
-    const result = await ExpenseModel.findById(expId)
-      .populate('recordedBy')
-      .catch((err) => handleErrorMessages(err));
-
-    return result;
-  }
-
-  async update(
-    expId: string,
-    propsToUpdate: any,
-  ): Promise<IExpenseDocument | string> {
-    const result = await ExpenseModel.findOneAndUpdate(
-      { _id: expId },
-      propsToUpdate,
-      {
-        omitUndefined: true,
-        new: true,
-        runValidators: true,
-      },
-    ).catch((err) => handleErrorMessages(err));
-
-    return result;
-  }
-
-  async delete(expId: string): Promise<any> {
-    const result = await ExpenseModel.deleteOne({
-      _id: expId,
-    }).catch((err) => handleErrorMessages(err));
+  async getById(expId: string): Promise<IExpenseDocument | null> {
+    const result = await this.expenseModel
+      .findById(expId)
+      .populate('recordedBy');
 
     return result;
   }
@@ -115,7 +89,7 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
     yesterday.setUTCHours(0, 0, 0, 0);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    const currentMonthPreviews = await ExpenseModel.aggregate([
+    const currentMonthPreviews = await this.expenseModel.aggregate([
       {
         $facet: {
           month: [
@@ -165,7 +139,7 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
     const firstDay = new Date(y, m, 1);
     const lastDay = new Date(y, m + 1, 0);
 
-    const categoryExpAggregates = await ExpenseModel.aggregate([
+    const categoryExpAggregates = await this.expenseModel.aggregate([
       {
         $facet: {
           average: [
@@ -229,7 +203,7 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
     const firstDay = new Date(y, m, 1);
     const lastDay = new Date(y, m + 1, 0);
 
-    const plotData = await ExpenseModel.aggregate([
+    const plotData = await this.expenseModel.aggregate([
       {
         $match: {
           incurredOn: { $gte: firstDay, $lt: lastDay },
@@ -254,7 +228,7 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
     const firstDay = new Date(y, 0, 1);
     const lastDay = new Date(y, 12, 0);
 
-    const monthlyTotals = await ExpenseModel.aggregate([
+    const monthlyTotals = await this.expenseModel.aggregate([
       {
         $match: {
           incurredOn: { $gte: firstDay, $lt: lastDay },
@@ -291,7 +265,7 @@ export class ExpenseDataAgent extends DataAgent<IExpenseDocument> {
     const firstDay = new Date(startDate);
     const lastDay = new Date(endDate);
 
-    const avgerageExpByCategory = await ExpenseModel.aggregate([
+    const avgerageExpByCategory = await this.expenseModel.aggregate([
       {
         $match: {
           incurredOn: { $gte: firstDay, $lte: lastDay },

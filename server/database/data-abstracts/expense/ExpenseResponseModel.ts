@@ -1,7 +1,7 @@
 import { IExpenseDocument } from './IExpenseDocument';
 import { ResponseModel } from '../../../../utils/ResponseModel';
-// TODO: - extend this class by adding more getters
-export class ExponseResponseModel implements ResponseModel<IExpenseDocument> {
+
+export class ExpenseResponseModel implements ResponseModel<IExpenseDocument> {
   document: IExpenseDocument;
 
   constructor(document: IExpenseDocument) {
@@ -10,7 +10,7 @@ export class ExponseResponseModel implements ResponseModel<IExpenseDocument> {
 
   getResponseModel() {
     return Object.seal({
-      id: this.document.id && this.document.id.toString(),
+      _id: this.document._id && this.document._id.toString(),
       title: this.document.title,
       amount: this.document.amount,
       category: this.document.category,

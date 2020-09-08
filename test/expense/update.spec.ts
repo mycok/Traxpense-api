@@ -37,7 +37,7 @@ describe('update expense', () => {
         app,
         baseUrl,
         result.body.token,
-        expense.body.expense.id,
+        expense.body.expense._id,
         { title: 'updated-expense' },
       );
 
@@ -51,7 +51,7 @@ describe('update expense', () => {
         app,
         baseUrl,
         result.body.token,
-        expense.body.expense.id,
+        expense.body.expense._id,
         { title: 456 },
       );
 

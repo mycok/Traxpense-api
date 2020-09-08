@@ -27,11 +27,11 @@ describe('read user', () => {
     it('a user matching the provided id should be successfully retrieved', async () => {
       const res = await chaiWithHttp
         .request(app.app)
-        .get(`${baseUrl}/users/${user.id}`)
+        .get(`${baseUrl}/users/${user._id}`)
         .set('authorization', `Bearer ${token}`);
 
       expect(res.status).to.be.equal(200);
-      expect(res.body.user.id).to.be.equal(user.id);
+      expect(res.body.user._id).to.be.equal(user._id.toString());
     });
   });
 

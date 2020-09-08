@@ -7,7 +7,7 @@ import { IUserDocument } from '../../database/data-abstracts/user/IUserDocument'
 import { UserModel } from '../../database/data-abstracts/user/UserModel';
 import { doPasswordsMatch } from '../../../utils/passwordUtils';
 import { generateToken } from '../../../utils/authUtils';
-import { UserResponseModel } from '../../database/data-abstracts/user/UserResposeModel';
+import { UserResponseModel } from '../../database/data-abstracts/user/UserResponseModel';
 import { handleErrorMessages } from '../../../utils/dbErrorHandler';
 
 interface ISigninRequest {
