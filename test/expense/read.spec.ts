@@ -37,7 +37,7 @@ describe('read expense', () => {
         app,
         baseUrl,
         result.body.token,
-        expense.body.expense.id,
+        expense.body.expense._id,
       );
 
       expect(res.status).to.be.equal(200);
@@ -47,7 +47,7 @@ describe('read expense', () => {
   describe('when a request is made to list a specific expense with a non existing expense id', () => {
     before(async () => {
       await MongooseAccess.mongooseConnection.models.Expense.deleteOne({
-        _id: expense.body.expense.id,
+        _id: expense.body.expense._id,
       });
     });
 
@@ -56,7 +56,7 @@ describe('read expense', () => {
         app,
         baseUrl,
         result.body.token,
-        expense.body.expense.id,
+        expense.body.expense._id,
       );
 
       expect(res.status).to.be.equal(404);

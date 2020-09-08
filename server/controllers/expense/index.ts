@@ -5,7 +5,7 @@ import { Validator } from '../../validation/validators';
 import { BadRequestError } from '../../extensions/BadRequestError';
 import { ExpenseDataAgent } from '../../database/data-agents/expense/ExpenseDataAgent';
 import { IExpenseDocument } from '../../database/data-abstracts';
-import { ExponseResponseModel } from '../../database/data-abstracts/expense/ExpenseResponseModel';
+import { ExpenseResponseModel } from '../../database/data-abstracts/expense/ExpenseResponseModel';
 import { NotFoundError } from '../../extensions/NotFoundError';
 
 interface IExpenseRequest {
@@ -47,7 +47,7 @@ export class ExpenseController {
 
     return res.status(201).json({
       success: true,
-      expense: new ExponseResponseModel(result).getResponseModel(),
+      expense: new ExpenseResponseModel(result).getResponseModel(),
     });
   }
 
@@ -85,7 +85,7 @@ export class ExpenseController {
 
     return res.status(200).json({
       success: true,
-      expense: { ...new ExponseResponseModel(expense).getResponseModel() },
+      expense: { ...new ExpenseResponseModel(expense).getResponseModel() },
     });
   }
 
@@ -116,7 +116,7 @@ export class ExpenseController {
 
     return res.status(200).json({
       success: true,
-      expense: new ExponseResponseModel(result).getResponseModel(),
+      expense: new ExpenseResponseModel(result).getResponseModel(),
     });
   }
 
@@ -226,7 +226,17 @@ export class ExpenseController {
     });
   }
 
-  // helper methods
+  /**
+   * Middleware
+   *
+   * @param req
+   * @param res
+   * @param next
+   * @param expId
+   *
+   * Retrieves a specific expense using the provided [expId]
+   *  and attaches it to the request under the expense property
+   */
   static async getById(
     req: any,
     res: Response,

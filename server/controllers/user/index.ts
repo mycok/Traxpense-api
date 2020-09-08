@@ -4,8 +4,7 @@ import userSchema from '../../validation/schemas/user/create.json';
 import profileSchema from '../../validation/schemas/user/profile.json';
 import updateSchema from '../../validation/schemas/user/update.json';
 import { UserDataAgent } from '../../database/data-agents/user/UserDataAgent';
-import { UserResponseModel } from '../../database/data-abstracts/user/UserResposeModel';
-import { UserModel } from '../../database/data-abstracts/user/UserModel';
+import { UserResponseModel } from '../../database/data-abstracts/user/UserResponseModel';
 import { Validator } from '../../validation/validators';
 import { BadRequestError } from '../../extensions/BadRequestError';
 import { NotFoundError } from '../../extensions/NotFoundError';
@@ -21,22 +20,6 @@ interface IUserRequest {
   username: string;
   email: string;
   password: string;
-  avatar?: string;
-  profile?: {
-    bio: string;
-    summary: string;
-    otherNames: {
-      first: string;
-      middle: string;
-      last: string;
-    };
-  };
-}
-
-interface IUserResponse {
-  id: string;
-  username: string;
-  email: string;
   avatar?: string;
   profile?: {
     bio: string;
@@ -96,7 +79,10 @@ export class UserController {
     return res.status(200).json({
       success: true,
       count: users.length,
-      users: users.length > 0 ? <IUserResponse[]>users : users,
+      users:
+        users.length > 0
+          ? new UserResponseModel(users[0]).getResponseModelFromList(users)
+          : users,
     });
   }
 
@@ -138,7 +124,7 @@ export class UserController {
 
     return res.status(200).json({
       success: true,
-      user: <IUserResponse>result,
+      user: new UserResponseModel(result).getResponseModel(),
     });
   }
 
@@ -162,7 +148,6 @@ export class UserController {
   }
 
   static async passwordReset(req: any, res: Response): Promise<any> {
-    // TODO: - check and validate the password inputs
     const {
       user,
       body: { oldPassword, newPassword },
@@ -200,7 +185,17 @@ export class UserController {
     return res.status(200).json({ success: true });
   }
 
-  // helpers and middleware
+  /**
+   * Middleware
+   *
+   * @param req
+   * @param res
+   * @param next
+   * @param userId
+   *
+   * Retrieves a specific user using the provided [userId]
+   *  and attaches it to the request under the user property
+   */
   static async getById(
     req: any,
     res: Response,
@@ -214,25 +209,20 @@ export class UserController {
         .status(404)
         .json(new NotFoundError('getById', 'User not found').toJSON());
     }
-    req.user = user;
+    req.user = new UserResponseModel(user).getFullModelResponse();
 
     return next();
   }
 
-  private static async pushDuplicatesToArray(
-    items: Array<any>,
-    obj: any,
-  ): Promise<any> {
-    const arr: Array<any> = [];
-    for (const item of items) {
-      if (item === 'username' || item === 'email') {
-        const user = await UserModel.findOne({ [item]: obj[item] });
-        if (user) arr.push({ [item]: `${obj[item]} already exists` });
-      }
-    }
-    return arr;
-  }
-
+  /**
+   * Middleware
+   *
+   * @param req
+   * @param res
+   * @param next
+   *
+   * Checks for username and email duplicates during an update operation
+   */
   static async checkDuplicatesOnUpdate(
     req: Request,
     res: Response,
@@ -240,7 +230,7 @@ export class UserController {
   ): Promise<any> {
     const { body } = req;
     const propertiesToUpdate = Object.keys(body);
-    const duplicates: Array<any> = await UserController.pushDuplicatesToArray(
+    const duplicates: Array<any> = await UserController.userDataAgent.pushDuplicatesToArray(
       propertiesToUpdate,
       body,
     );
