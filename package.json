@@ -1,7 +1,7 @@
 {
   "name": "tranxpence-api",
   "version": "1.0.0",
-  "description": "an expense tracker and analyer web aapp",
+  "description": "an expense tracker and analyser web app",
   "main": "./server/index.ts",
   "engines": {
     "node": "14.3.0"

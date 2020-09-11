@@ -41,7 +41,7 @@ export class UserController {
       userSchema,
       profileSchema,
       'user',
-      body
+      body,
     );
 
     if (typeof validationResults === 'string') {
@@ -107,7 +107,7 @@ export class UserController {
       updateSchema,
       profileSchema,
       'user',
-      body
+      body,
     );
 
     if (typeof validationResults === 'string') {
@@ -166,15 +166,15 @@ export class UserController {
         .json(
           new BadRequestError(
             'password-reset',
-            'A password must contain a minimum of 8 characters including atleast one an uppercase, lowercase, number and a special character!'
-          )
+            'A password must contain a minimum of 8 characters including atleast one an uppercase, lowercase, number and a special character!',
+          ),
         );
     }
 
     const hashedPassword = hashPassword(newPassword, user.salt);
     const result = await UserController._userDataAgent.reset(
       user._id,
-      hashedPassword
+      hashedPassword,
     );
 
     if (typeof result === 'string') {
@@ -200,7 +200,7 @@ export class UserController {
     req: any,
     res: Response,
     next: Function,
-    userId: string
+    userId: string,
   ): Promise<any> {
     const user = await UserController._userDataAgent.getById(userId);
 
@@ -226,13 +226,13 @@ export class UserController {
   static async checkDuplicatesOnUpdate(
     req: Request,
     res: Response,
-    next: Function
+    next: Function,
   ): Promise<any> {
     const { body } = req;
     const propertiesToUpdate = Object.keys(body);
     const duplicates: Array<any> = await UserController._userDataAgent.pushDuplicatesToArray(
       propertiesToUpdate,
-      body
+      body,
     );
 
     if (duplicates.length > 0) {
