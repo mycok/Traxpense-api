@@ -1,4 +1,4 @@
 export interface ResponseModel<T> {
-  readonly document: T;
+  readonly _document: T;
   getResponseModel(): Partial<T>;
 }

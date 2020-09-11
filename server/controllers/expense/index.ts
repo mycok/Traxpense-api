@@ -16,7 +16,7 @@ interface IExpenseRequest {
 }
 
 export class ExpenseController {
-  private static expenseDataAgent = new ExpenseDataAgent();
+  private static _expenseDataAgent = new ExpenseDataAgent();
 
   static async create(req: any, res: Response): Promise<any> {
     const { auth, body } = req;
@@ -34,7 +34,7 @@ export class ExpenseController {
         );
     }
 
-    const result = await ExpenseController.expenseDataAgent.create({
+    const result = await ExpenseController._expenseDataAgent.create({
       ...body,
       recordedBy: auth._id,
     });
@@ -59,7 +59,7 @@ export class ExpenseController {
       query: { cursor, startDate, endDate },
     } = req;
 
-    let expenses: IExpenseDocument[] = await ExpenseController.expenseDataAgent.list(
+    let expenses: IExpenseDocument[] = await ExpenseController._expenseDataAgent.list(
       limit,
       auth._id,
       startDate,
@@ -108,7 +108,7 @@ export class ExpenseController {
         );
     }
 
-    const result = await ExpenseController.expenseDataAgent.update(_id, body);
+    const result = await ExpenseController._expenseDataAgent.update(_id, body);
 
     if (typeof result !== 'object') {
       return res.status(400).json(new BadRequestError('update', result));
@@ -125,7 +125,7 @@ export class ExpenseController {
       expense: { _id },
     } = req;
 
-    const deletedResponse = await ExpenseController.expenseDataAgent.delete(
+    const deletedResponse = await ExpenseController._expenseDataAgent.delete(
       _id,
     );
 
@@ -145,7 +145,7 @@ export class ExpenseController {
     const {
       auth: { _id },
     } = req;
-    const currentPreview = await ExpenseController.expenseDataAgent.currentMonthPreview(
+    const currentPreview = await ExpenseController._expenseDataAgent.currentMonthPreview(
       _id,
     );
 
@@ -164,7 +164,7 @@ export class ExpenseController {
       auth: { _id },
     } = req;
 
-    const categoryExpAggregates = await ExpenseController.expenseDataAgent.expensesByCategory(
+    const categoryExpAggregates = await ExpenseController._expenseDataAgent.expensesByCategory(
       _id,
     );
 
@@ -180,7 +180,7 @@ export class ExpenseController {
       query: { period },
     } = req;
 
-    const plotData = await ExpenseController.expenseDataAgent.scatteredPlotExpData(
+    const plotData = await ExpenseController._expenseDataAgent.scatteredPlotExpData(
       _id,
       period,
     );
@@ -197,7 +197,7 @@ export class ExpenseController {
       query: { year },
     } = req;
 
-    const annualExpData = await ExpenseController.expenseDataAgent.annualExpData(
+    const annualExpData = await ExpenseController._expenseDataAgent.annualExpData(
       _id,
       year,
     );
@@ -214,7 +214,7 @@ export class ExpenseController {
       query: { startDate, endDate },
     } = req;
 
-    const avgerageExpByCategory = await ExpenseController.expenseDataAgent.avgExpBycategory(
+    const avgerageExpByCategory = await ExpenseController._expenseDataAgent.avgExpBycategory(
       _id,
       startDate,
       endDate,
@@ -243,7 +243,7 @@ export class ExpenseController {
     next: Function,
     expId: string,
   ): Promise<any> {
-    const expense = await ExpenseController.expenseDataAgent.getById(expId);
+    const expense = await ExpenseController._expenseDataAgent.getById(expId);
 
     if (!expense) {
       return res

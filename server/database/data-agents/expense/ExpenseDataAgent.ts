@@ -5,11 +5,11 @@ import { BaseDataAgent } from '../../../../utils/BaseDataAgent';
 
 // TODO: add error handling for all aggregate data handlers
 export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
-  private expenseModel: any;
+  private _expenseModel: any;
 
   constructor() {
     super(ExpenseModel);
-    this.expenseModel = ExpenseModel;
+    this._expenseModel = ExpenseModel;
   }
   /**
    * Uses cursor based pagination along with a date filter to return
@@ -44,7 +44,7 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
         ],
       };
     }
-    const expenses: IExpenseDocument[] = await this.expenseModel
+    const expenses: IExpenseDocument[] = await this._expenseModel
       .find({
         ...dateQuery,
         ...cursorQuery,
@@ -58,7 +58,7 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
   }
 
   async getById(expId: string): Promise<IExpenseDocument | null> {
-    const result = await this.expenseModel
+    const result = await this._expenseModel
       .findById(expId)
       .populate('recordedBy');
 
@@ -89,7 +89,7 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
     yesterday.setUTCHours(0, 0, 0, 0);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    const currentMonthPreviews = await this.expenseModel.aggregate([
+    const currentMonthPreviews = await this._expenseModel.aggregate([
       {
         $facet: {
           month: [
@@ -139,7 +139,7 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
     const firstDay = new Date(y, m, 1);
     const lastDay = new Date(y, m + 1, 0);
 
-    const categoryExpAggregates = await this.expenseModel.aggregate([
+    const categoryExpAggregates = await this._expenseModel.aggregate([
       {
         $facet: {
           average: [
@@ -203,7 +203,7 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
     const firstDay = new Date(y, m, 1);
     const lastDay = new Date(y, m + 1, 0);
 
-    const plotData = await this.expenseModel.aggregate([
+    const plotData = await this._expenseModel.aggregate([
       {
         $match: {
           incurredOn: { $gte: firstDay, $lt: lastDay },
@@ -228,7 +228,7 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
     const firstDay = new Date(y, 0, 1);
     const lastDay = new Date(y, 12, 0);
 
-    const monthlyTotals = await this.expenseModel.aggregate([
+    const monthlyTotals = await this._expenseModel.aggregate([
       {
         $match: {
           incurredOn: { $gte: firstDay, $lt: lastDay },
@@ -265,7 +265,7 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
     const firstDay = new Date(startDate);
     const lastDay = new Date(endDate);
 
-    const avgerageExpByCategory = await this.expenseModel.aggregate([
+    const avgerageExpByCategory = await this._expenseModel.aggregate([
       {
         $match: {
           incurredOn: { $gte: firstDay, $lte: lastDay },
