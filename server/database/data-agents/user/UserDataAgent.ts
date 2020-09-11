@@ -3,18 +3,18 @@ import { handleErrorMessages } from '../../../../utils/dbErrorHandler';
 import { BaseDataAgent } from '../../../../utils/BaseDataAgent';
 
 export class UserDataAgent extends BaseDataAgent<IUserDocument> {
-  private userModel: any;
+  private _userModel: any;
 
   constructor() {
     super(UserModel);
-    this.userModel = UserModel;
+    this._userModel = UserModel;
   }
 
   async pushDuplicatesToArray(items: Array<any>, obj: any): Promise<any> {
     const arr: Array<any> = [];
     for (const item of items) {
       if (item === 'username' || item === 'email') {
-        const user = await UserModel.findOne({ [item]: obj[item] });
+        const user = await this._userModel.findOne({ [item]: obj[item] });
         if (user) arr.push({ [item]: `${obj[item]} already exists` });
       }
     }
@@ -22,7 +22,7 @@ export class UserDataAgent extends BaseDataAgent<IUserDocument> {
   }
 
   async reset(userId: IUserDocument, newPassword: string): Promise<any> {
-    return await this.userModel
+    return await this._userModel
       .findByIdAndUpdate(userId, {
         password: newPassword,
       })

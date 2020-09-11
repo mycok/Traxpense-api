@@ -2,15 +2,15 @@ import { DataAgent } from './DataAgent';
 import { handleErrorMessages } from './dbErrorHandler';
 
 export class BaseDataAgent<T> extends DataAgent<T> {
-  private model: any;
+  private _model: any;
 
   constructor(model: any) {
     super();
-    this.model = model;
+    this._model = model;
   }
 
   async create(userData: T): Promise<T | string> {
-    const result = await this.model
+    const result = await this._model
       .create(userData)
       .catch((err: any) => handleErrorMessages(err));
 
@@ -18,19 +18,19 @@ export class BaseDataAgent<T> extends DataAgent<T> {
   }
 
   async list(...args: any): Promise<T[]> {
-    const results: T[] = await this.model.find();
+    const results: T[] = await this._model.find();
 
     return results;
   }
 
   async getById(id: string): Promise<T | null> {
-    const result = await this.model.findById(id);
+    const result = await this._model.findById(id);
 
     return result;
   }
 
   async update(id: string, propsToUpdate: any): Promise<T | string> {
-    const result = await this.model
+    const result = await this._model
       .findOneAndUpdate({ _id: id }, propsToUpdate, {
         omitUndefined: true,
         new: true,
@@ -42,7 +42,7 @@ export class BaseDataAgent<T> extends DataAgent<T> {
   }
 
   async delete(id: string): Promise<any> {
-    const result = await this.model
+    const result = await this._model
       .deleteOne({
         _id: id,
       })

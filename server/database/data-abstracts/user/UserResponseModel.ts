@@ -2,19 +2,19 @@ import { IUserDocument } from './IUserDocument';
 import { ResponseModel } from '../../../../utils/ResponseModel';
 
 export class UserResponseModel implements ResponseModel<IUserDocument> {
-  document: IUserDocument;
+  _document: IUserDocument;
 
   constructor(document: IUserDocument) {
-    this.document = document;
+    this._document = document;
   }
 
   getResponseModel() {
     return Object.seal({
-      _id: this.document._id && this.document._id.toString(),
-      username: this.document.username,
-      email: this.document.email,
-      avatar: this.document.avatar,
-      profile: this.document.profile,
+      _id: this._document._id && this._document._id.toString(),
+      username: this._document.username,
+      email: this._document.email,
+      avatar: this._document.avatar,
+      profile: this._document.profile,
     });
   }
 
@@ -30,13 +30,13 @@ export class UserResponseModel implements ResponseModel<IUserDocument> {
 
   getFullModelResponse() {
     return Object.seal({
-      _id: this.document._id && this.document._id.toString(),
-      username: this.document.username,
-      email: this.document.email,
-      avatar: this.document.avatar,
-      profile: this.document.profile,
-      password: this.document.password,
-      salt: this.document.salt,
+      _id: this._document._id && this._document._id.toString(),
+      username: this._document.username,
+      email: this._document.email,
+      avatar: this._document.avatar,
+      profile: this._document.profile,
+      password: this._document.password,
+      salt: this._document.salt,
     });
   }
 }

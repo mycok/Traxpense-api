@@ -33,7 +33,7 @@ interface IUserRequest {
 }
 
 export class UserController {
-  private static userDataAgent = new UserDataAgent();
+  private static _userDataAgent = new UserDataAgent();
 
   static async create(req: Request, res: Response): Promise<any> {
     const { body } = req;
@@ -41,7 +41,7 @@ export class UserController {
       userSchema,
       profileSchema,
       'user',
-      body,
+      body
     );
 
     if (typeof validationResults === 'string') {
@@ -51,7 +51,7 @@ export class UserController {
     }
     const salt = makeSalt();
     const hashedPassword = hashPassword(body.password, salt);
-    const result = await UserController.userDataAgent.create({
+    const result = await UserController._userDataAgent.create({
       ...body,
       password: hashedPassword,
       salt,
@@ -74,7 +74,7 @@ export class UserController {
   }
 
   static async list(req: Request, res: Response): Promise<any> {
-    const users: IUserDocument[] = await UserController.userDataAgent.list();
+    const users: IUserDocument[] = await UserController._userDataAgent.list();
 
     return res.status(200).json({
       success: true,
@@ -107,7 +107,7 @@ export class UserController {
       updateSchema,
       profileSchema,
       'user',
-      body,
+      body
     );
 
     if (typeof validationResults === 'string') {
@@ -116,7 +116,7 @@ export class UserController {
         .json(new BadRequestError('update', validationResults));
     }
 
-    const result = await UserController.userDataAgent.update(_id, body);
+    const result = await UserController._userDataAgent.update(_id, body);
 
     if (typeof result !== 'object') {
       return res.status(400).json(new BadRequestError('update', result));
@@ -133,7 +133,7 @@ export class UserController {
       user: { _id },
     } = req;
 
-    const deletedResponse = await UserController.userDataAgent.delete(_id);
+    const deletedResponse = await UserController._userDataAgent.delete(_id);
 
     if (typeof deletedResponse === 'string') {
       return res
@@ -166,15 +166,15 @@ export class UserController {
         .json(
           new BadRequestError(
             'password-reset',
-            'A password must contain a minimum of 8 characters including atleast one an uppercase, lowercase, number and a special character!',
-          ),
+            'A password must contain a minimum of 8 characters including atleast one an uppercase, lowercase, number and a special character!'
+          )
         );
     }
 
     const hashedPassword = hashPassword(newPassword, user.salt);
-    const result = await UserController.userDataAgent.reset(
+    const result = await UserController._userDataAgent.reset(
       user._id,
-      hashedPassword,
+      hashedPassword
     );
 
     if (typeof result === 'string') {
@@ -200,9 +200,9 @@ export class UserController {
     req: any,
     res: Response,
     next: Function,
-    userId: string,
+    userId: string
   ): Promise<any> {
-    const user = await UserController.userDataAgent.getById(userId);
+    const user = await UserController._userDataAgent.getById(userId);
 
     if (!user) {
       return res
@@ -226,13 +226,13 @@ export class UserController {
   static async checkDuplicatesOnUpdate(
     req: Request,
     res: Response,
-    next: Function,
+    next: Function
   ): Promise<any> {
     const { body } = req;
     const propertiesToUpdate = Object.keys(body);
-    const duplicates: Array<any> = await UserController.userDataAgent.pushDuplicatesToArray(
+    const duplicates: Array<any> = await UserController._userDataAgent.pushDuplicatesToArray(
       propertiesToUpdate,
-      body,
+      body
     );
 
     if (duplicates.length > 0) {
