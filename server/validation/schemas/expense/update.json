@@ -13,7 +13,13 @@
       "minimum": 0
     },
     "category": {
-      "type": "string"
+      "type": "object",
+      "properties": {
+        "_id": { "type": "string" },
+        "name": { "type": "string", "minLength": 3 }
+      },
+      "additionalProperties": false,
+      "required": ["_id", "name"]
     },
     "notes": {
       "type": "string"

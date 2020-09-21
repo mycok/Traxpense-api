@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import authSchema from '../../validation/schemas/user/auth.json';
-import { Validator } from '../../validation/validators';
 import { BadRequestError } from '../../extensions/BadRequestError';
 import { NotFoundError } from '../../extensions/NotFoundError';
 import { IUserDocument } from '../../database/data-abstracts/user/IUserDocument';
 import { UserModel } from '../../database/data-abstracts/user/UserModel';
 import { doPasswordsMatch } from '../../../utils/passwordUtils';
 import { generateToken } from '../../../utils/authUtils';
-import { UserResponseModel } from '../../database/data-abstracts/user/UserResponseModel';
+import { UserModelResponse } from '../../database/data-abstracts/user/UserModelResponse';
 import { handleErrorMessages } from '../../../utils/dbErrorHandler';
+import { AuthValidator } from '../../validation/validators/auth/index';
 
 interface ISigninRequest {
   email: string;
@@ -18,7 +18,7 @@ interface ISigninRequest {
 export class AuthController {
   static async signin(req: Request, res: Response): Promise<any> {
     const { body } = req;
-    const validationResults = Validator.validateAuthData<ISigninRequest>(
+    const validationResults = new AuthValidator().validate<ISigninRequest>(
       authSchema,
       'signin',
       body,
@@ -53,7 +53,7 @@ export class AuthController {
     return res.status(200).json({
       success: true,
       user: {
-        ...new UserResponseModel(user as IUserDocument).getResponseModel(),
+        ...new UserModelResponse(user as IUserDocument).getResponseModel(),
       },
       token,
     });

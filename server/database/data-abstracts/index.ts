@@ -4,3 +4,6 @@ export { UserSchema } from './user/UserSchema';
 export { ExpenseModel } from './expense/ExpenseModel';
 export { IExpenseDocument } from './expense/IExpenseDocument';
 export { ExpenseSchema } from './expense/ExpenseSchema';
+export { CategoryModel } from './category/CategoryModel';
+export { ICategoryDocument } from './category/ICategoryDocument';
+export { CategorySchema } from './category/CategorySchema';

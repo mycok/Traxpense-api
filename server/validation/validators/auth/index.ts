@@ -1,10 +1,11 @@
 import Ajv from 'ajv';
+import { BaseValidator } from '../BaseValidator';
 
-import { BaseValidator } from './BaseValidator';
-
-export class Validator extends BaseValidator {
+export class AuthValidator extends BaseValidator {
   validate<T>(schema: any, pathPrefix: string, data: T): boolean | string {
-    const ajvValidate = new Ajv().compile(schema);
+    const ajvValidate = new Ajv()
+      .addFormat('email', /^[\w.+]+@\w+\.\w+$/)
+      .compile(schema);
 
     const isValid = ajvValidate(data);
 

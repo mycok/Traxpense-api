@@ -8,6 +8,7 @@ import swaggerUi from 'swagger-ui-express';
 import { userRouter } from '../routers/UserRouter';
 import { authRouter } from '../routers/AuthRouter';
 import { expenseRouter } from '../routers/ExpenseRouter';
+import { categoryRouter } from '../routers/CategoryRouter';
 
 import documentation from '../../openapi.json';
 
@@ -35,6 +36,7 @@ export class Application {
     this.app.use(userRouter);
     this.app.use(authRouter);
     this.app.use(expenseRouter);
+    this.app.use(categoryRouter);
   }
 
   private clientErrorHandler(
