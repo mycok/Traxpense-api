@@ -4,12 +4,12 @@ import userSchema from '../../validation/schemas/user/create.json';
 import profileSchema from '../../validation/schemas/user/profile.json';
 import updateSchema from '../../validation/schemas/user/update.json';
 import { UserDataAgent } from '../../database/data-agents/user/UserDataAgent';
-import { UserResponseModel } from '../../database/data-abstracts/user/UserResponseModel';
-import { Validator } from '../../validation/validators';
+import { UserModelResponse } from '../../database/data-abstracts/user/UserModelResponse';
 import { BadRequestError } from '../../extensions/BadRequestError';
 import { NotFoundError } from '../../extensions/NotFoundError';
 import { IUserDocument } from '../../database/data-abstracts/user/IUserDocument';
 import { generateToken } from '../../../utils/authUtils';
+import { UserValidator } from '../../validation/validators/user/index';
 import {
   hashPassword,
   doPasswordsMatch,
@@ -37,9 +37,8 @@ export class UserController {
 
   static async create(req: Request, res: Response): Promise<any> {
     const { body } = req;
-    const validationResults = Validator.validateUser<IUserRequest>(
-      userSchema,
-      profileSchema,
+    const validationResults = new UserValidator().validate<IUserRequest>(
+      [userSchema, profileSchema],
       'user',
       body,
     );
@@ -67,7 +66,7 @@ export class UserController {
     return res.status(201).json({
       success: true,
       user: {
-        ...new UserResponseModel(result).getResponseModel(),
+        ...new UserModelResponse(result).getResponseModel(),
       },
       token,
     });
@@ -81,7 +80,7 @@ export class UserController {
       count: users.length,
       users:
         users.length > 0
-          ? new UserResponseModel(users[0]).getResponseModelFromList(users)
+          ? new UserModelResponse(users[0]).getResponseModelFromList(users)
           : users,
     });
   }
@@ -92,7 +91,7 @@ export class UserController {
     return res.status(200).json({
       success: true,
       user: {
-        ...new UserResponseModel(user as IUserDocument).getResponseModel(),
+        ...new UserModelResponse(user as IUserDocument).getResponseModel(),
       },
     });
   }
@@ -103,9 +102,8 @@ export class UserController {
       user: { _id },
     } = req;
 
-    const validationResults = Validator.validateUser<IUserRequest>(
-      updateSchema,
-      profileSchema,
+    const validationResults = new UserValidator().validate<IUserRequest>(
+      [updateSchema, profileSchema],
       'user',
       body,
     );
@@ -124,7 +122,7 @@ export class UserController {
 
     return res.status(200).json({
       success: true,
-      user: new UserResponseModel(result).getResponseModel(),
+      user: new UserModelResponse(result).getResponseModel(),
     });
   }
 
@@ -192,6 +190,7 @@ export class UserController {
    * @param res
    * @param next
    * @param userId
+   * @return
    *
    * Retrieves a specific user using the provided [userId]
    *  and attaches it to the request under the user property
@@ -209,7 +208,7 @@ export class UserController {
         .status(404)
         .json(new NotFoundError('getById', 'User not found').toJSON());
     }
-    req.user = new UserResponseModel(user).getFullModelResponse();
+    req.user = new UserModelResponse(user).getFullModelResponse();
 
     return next();
   }

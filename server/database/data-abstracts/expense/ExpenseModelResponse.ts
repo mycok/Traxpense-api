@@ -1,7 +1,7 @@
 import { IExpenseDocument } from './IExpenseDocument';
 import { ResponseModel } from '../../../../utils/ResponseModel';
 
-export class ExpenseResponseModel implements ResponseModel<IExpenseDocument> {
+export class ExpenseModelResponse implements ResponseModel<IExpenseDocument> {
   _document: IExpenseDocument;
 
   constructor(document: IExpenseDocument) {
@@ -10,7 +10,7 @@ export class ExpenseResponseModel implements ResponseModel<IExpenseDocument> {
 
   getResponseModel() {
     return Object.seal({
-      _id: this._document._id && this._document._id.toString(),
+      _id: this._document._id?.toString(),
       title: this._document.title,
       amount: this._document.amount,
       category: this._document.category,

@@ -2,25 +2,49 @@ import { Application } from '../../server/app/Application';
 import { MongooseAccess } from '../../server/database/adaptors/MongoAccess';
 import UserModelFixture, { createUser } from '../user/fixtures';
 import { validExpenseObject, aggExpenses, createExpense } from './fixtures';
+import { createCategory, validCategoryObject } from '../category/fixtures';
 import { expect } from '..';
 
 const baseUrl = '/api/v1';
 describe('preview aggregated expenses', () => {
   const app = new Application();
-  let result: any;
+  let userResult: any;
+  let categoryResult: any;
 
   before(async () => {
-    result = await createUser(app, baseUrl, UserModelFixture.validUserObject);
+    userResult = await createUser(
+      app,
+      baseUrl,
+      UserModelFixture.validUserObject,
+    );
   });
 
   before(async () => {
-    await createExpense(app, baseUrl, result.body.token, validExpenseObject);
+    categoryResult = await createCategory(
+      app,
+      baseUrl,
+      userResult?.body?.token,
+      validCategoryObject,
+    );
+  });
+
+  before(async () => {
+    await createExpense(app, baseUrl, userResult.body.token, {
+      ...validExpenseObject,
+      category: categoryResult?.body?.category,
+    });
   });
 
   after(async () => {
     await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(
       async () => {
-        await MongooseAccess.mongooseConnection.models.Expense.deleteMany({});
+        await MongooseAccess.mongooseConnection.models.Expense.deleteMany(
+          {},
+        ).then(async () => {
+          await MongooseAccess.mongooseConnection.models.Category.deleteMany(
+            {},
+          );
+        });
       },
     );
   });
@@ -30,7 +54,7 @@ describe('preview aggregated expenses', () => {
       const res = await aggExpenses(
         app,
         `${baseUrl}/expenses/current`,
-        result.body.token,
+        userResult.body.token,
       );
 
       expect(res.status).to.be.equal(200);

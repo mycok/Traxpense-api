@@ -13,9 +13,8 @@ export const ExpenseSchema: Schema = new Schema(
       required: true,
     },
     category: {
-      type: String,
-      trim: true,
-      required: true,
+      type: SchemaTypes.ObjectId,
+      ref: 'Category',
     },
     incurredOn: {
       type: Date,

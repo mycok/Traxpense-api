@@ -2,31 +2,50 @@ import { Application } from '../../server/app/Application';
 import { MongooseAccess } from '../../server/database/adaptors/MongoAccess';
 import UserModelFixture, { createUser } from '../user/fixtures';
 import { validExpenseObject, updateExpense, createExpense } from './fixtures';
+import { createCategory, validCategoryObject } from '../category/fixtures';
 import { expect } from '..';
 
 const baseUrl = '/api/v1';
 describe('update expense', () => {
   const app = new Application();
-  let result: any;
+  let userResult: any;
+  let categoryResult: any;
   let expense: any;
 
   before(async () => {
-    result = await createUser(app, baseUrl, UserModelFixture.validUserObject);
+    userResult = await createUser(
+      app,
+      baseUrl,
+      UserModelFixture.validUserObject,
+    );
   });
 
   before(async () => {
-    expense = await createExpense(
+    categoryResult = await createCategory(
       app,
       baseUrl,
-      result.body.token,
-      validExpenseObject,
+      userResult?.body?.token,
+      validCategoryObject,
     );
+  });
+
+  before(async () => {
+    expense = await createExpense(app, baseUrl, userResult.body.token, {
+      ...validExpenseObject,
+      category: categoryResult?.body?.category,
+    });
   });
 
   after(async () => {
     await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(
       async () => {
-        await MongooseAccess.mongooseConnection.models.Expense.deleteMany({});
+        await MongooseAccess.mongooseConnection.models.Expense.deleteMany(
+          {},
+        ).then(async () => {
+          await MongooseAccess.mongooseConnection.models.Category.deleteMany(
+            {},
+          );
+        });
       },
     );
   });
@@ -36,7 +55,7 @@ describe('update expense', () => {
       const res = await updateExpense(
         app,
         baseUrl,
-        result.body.token,
+        userResult.body.token,
         expense.body.expense._id,
         { title: 'updated-expense' },
       );
@@ -50,7 +69,7 @@ describe('update expense', () => {
       const res = await updateExpense(
         app,
         baseUrl,
-        result.body.token,
+        userResult.body.token,
         expense.body.expense._id,
         { title: 456 },
       );

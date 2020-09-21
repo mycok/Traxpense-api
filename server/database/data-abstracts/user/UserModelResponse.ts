@@ -1,7 +1,7 @@
 import { IUserDocument } from './IUserDocument';
 import { ResponseModel } from '../../../../utils/ResponseModel';
 
-export class UserResponseModel implements ResponseModel<IUserDocument> {
+export class UserModelResponse implements ResponseModel<IUserDocument> {
   _document: IUserDocument;
 
   constructor(document: IUserDocument) {
@@ -10,7 +10,7 @@ export class UserResponseModel implements ResponseModel<IUserDocument> {
 
   getResponseModel() {
     return Object.seal({
-      _id: this._document._id && this._document._id.toString(),
+      _id: this._document._id?.toString(),
       username: this._document.username,
       email: this._document.email,
       avatar: this._document.avatar,

@@ -9,9 +9,9 @@ export class BaseDataAgent<T> extends DataAgent<T> {
     this._model = model;
   }
 
-  async create(userData: T): Promise<T | string> {
+  async create(data: T): Promise<T | string> {
     const result = await this._model
-      .create(userData)
+      .create(data)
       .catch((err: any) => handleErrorMessages(err));
 
     return result;

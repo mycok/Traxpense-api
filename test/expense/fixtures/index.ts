@@ -80,5 +80,4 @@ export async function aggExpenses(app: any, url: string, token: string) {
 export const validExpenseObject = {
   title: 'test-expense',
   amount: 23400,
-  category: 'testing',
 };

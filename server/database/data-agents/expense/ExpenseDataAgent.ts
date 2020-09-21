@@ -50,6 +50,7 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
         ...cursorQuery,
       })
       .populate('recordedBy', 'username email')
+      .populate('category', '_id title')
       .limit(limit + 1)
       .sort({ incurredOn: -1 })
       .select('_id title amount category notes incurredOn createdAt');
@@ -60,7 +61,8 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
   async getById(expId: string): Promise<IExpenseDocument | null> {
     const result = await this._expenseModel
       .findById(expId)
-      .populate('recordedBy');
+      .populate('recordedBy')
+      .populate('category', '_id title');
 
     return result;
   }

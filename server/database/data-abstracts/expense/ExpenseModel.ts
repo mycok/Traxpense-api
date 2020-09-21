@@ -1,4 +1,5 @@
 import { Model, model } from 'mongoose';
+
 import { IExpenseDocument } from './IExpenseDocument';
 import { ExpenseSchema } from './ExpenseSchema';
 

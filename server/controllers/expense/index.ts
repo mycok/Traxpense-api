@@ -5,7 +5,7 @@ import { Validator } from '../../validation/validators';
 import { BadRequestError } from '../../extensions/BadRequestError';
 import { ExpenseDataAgent } from '../../database/data-agents/expense/ExpenseDataAgent';
 import { IExpenseDocument } from '../../database/data-abstracts';
-import { ExpenseResponseModel } from '../../database/data-abstracts/expense/ExpenseResponseModel';
+import { ExpenseModelResponse } from '../../database/data-abstracts/expense/ExpenseModelResponse';
 import { NotFoundError } from '../../extensions/NotFoundError';
 
 interface IExpenseRequest {
@@ -20,7 +20,7 @@ export class ExpenseController {
 
   static async create(req: any, res: Response): Promise<any> {
     const { auth, body } = req;
-    const validationResults = Validator.validate<IExpenseRequest>(
+    const validationResults = new Validator().validate<IExpenseRequest>(
       createExpenseSchema,
       'expense',
       body,
@@ -37,6 +37,7 @@ export class ExpenseController {
     const result = await ExpenseController._expenseDataAgent.create({
       ...body,
       recordedBy: auth._id,
+      category: body.category._id,
     });
 
     if (typeof result === 'string') {
@@ -47,7 +48,7 @@ export class ExpenseController {
 
     return res.status(201).json({
       success: true,
-      expense: new ExpenseResponseModel(result).getResponseModel(),
+      expense: new ExpenseModelResponse(result).getResponseModel(),
     });
   }
 
@@ -85,7 +86,7 @@ export class ExpenseController {
 
     return res.status(200).json({
       success: true,
-      expense: { ...new ExpenseResponseModel(expense).getResponseModel() },
+      expense: { ...new ExpenseModelResponse(expense).getResponseModel() },
     });
   }
 
@@ -94,7 +95,7 @@ export class ExpenseController {
       expense: { _id },
       body,
     } = req;
-    const validationResults = Validator.validate<IExpenseRequest>(
+    const validationResults = new Validator().validate<IExpenseRequest>(
       updateExpenseSchema,
       'expense',
       body,
@@ -116,7 +117,7 @@ export class ExpenseController {
 
     return res.status(200).json({
       success: true,
-      expense: new ExpenseResponseModel(result).getResponseModel(),
+      expense: new ExpenseModelResponse(result).getResponseModel(),
     });
   }
 
