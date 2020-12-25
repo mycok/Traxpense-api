@@ -12,15 +12,13 @@ const baseUrl = '/api/v1';
     - test presence of both old and new password
   */
 describe('reset password', () => {
+  const app = new Application();
   let user: IUserDocument;
   let token: string;
 
   before(async () => {
     const salt = makeSalt();
-    const hashedPassword = hashPassword(
-      UserModelFixture.validUserObject.password,
-      salt,
-    );
+    const hashedPassword = hashPassword(UserModelFixture.validUserObject.password, salt);
     user = await MongooseAccess.mongooseConnection.models.User.create({
       ...UserModelFixture.validUserObject,
       password: hashedPassword,
@@ -34,7 +32,6 @@ describe('reset password', () => {
     await MongooseAccess.mongooseConnection.models.User.deleteMany({});
   });
 
-  const app = new Application();
   describe("when a request is made to reset a user's password with a wrong old password", () => {
     it('a bad request error should be returned', async () => {
       const res = await chaiWithHttp

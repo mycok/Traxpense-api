@@ -13,7 +13,7 @@ import { categoryRouter } from '../routers/CategoryRouter';
 import documentation from '../../openapi.json';
 
 export class Application {
-  app: express.Express;
+  readonly app: express.Express;
 
   constructor() {
     this.app = express();

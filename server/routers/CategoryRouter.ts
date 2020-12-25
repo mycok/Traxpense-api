@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 
-import { authenticate } from '../middleware/auth/index';
-import { CategoryController } from '../controllers/category/index';
+import { authenticate } from '../middleware/auth';
+import { CategoryController } from '../controllers/category';
 
 export const categoryRouter: Router = express.Router();
 

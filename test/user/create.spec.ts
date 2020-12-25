@@ -5,24 +5,17 @@ import { expect } from '..';
 
 const baseUrl = '/api/v1';
 describe('create user', () => {
+  const app = new Application();
   after(async () => {
     await MongooseAccess.mongooseConnection.models.User.deleteMany({});
   });
 
-  const app = new Application();
   describe('when a request contains all the required properties', () => {
     it('a new user should be successfully created', async () => {
-      const res = await createUser(
-        app,
-        baseUrl,
-        UserModelFixture.validUserObject,
-      );
+      const res = await createUser(app, baseUrl, UserModelFixture.validUserObject);
 
       expect(res.status).to.be.equal(201);
-      expect(res.body.user).to.have.property(
-        'email',
-        'somerandomemail@test.now',
-      );
+      expect(res.body.user).to.have.property('email', 'somerandomemail@test.now');
     });
   });
 
@@ -36,9 +29,7 @@ describe('create user', () => {
 
       expect(res.status).to.be.equal(400);
       expect(res.body.success).to.be.equal(false);
-      expect(res.body.message).to.be.equal(
-        "The 'user.password' field is missing",
-      );
+      expect(res.body.message).to.be.equal("The 'user.password' field is missing");
     });
   });
 
@@ -124,11 +115,7 @@ describe('create user', () => {
 
   describe('when a request contains a username that is already available in the system ', () => {
     it('a bad request error with a duplicate message should be returned', async () => {
-      const res = await createUser(
-        app,
-        baseUrl,
-        UserModelFixture.validUserObject,
-      );
+      const res = await createUser(app, baseUrl, UserModelFixture.validUserObject);
 
       expect(res.status).to.be.equal(400);
       expect(res.body.success).to.be.equal(false);

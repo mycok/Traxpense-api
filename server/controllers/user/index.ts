@@ -4,17 +4,12 @@ import userSchema from '../../validation/schemas/user/create.json';
 import profileSchema from '../../validation/schemas/user/profile.json';
 import updateSchema from '../../validation/schemas/user/update.json';
 import { UserDataAgent } from '../../database/data-agents/user/UserDataAgent';
-import { UserModelResponse } from '../../database/data-abstracts/user/UserModelResponse';
 import { BadRequestError } from '../../extensions/BadRequestError';
 import { NotFoundError } from '../../extensions/NotFoundError';
-import { IUserDocument } from '../../database/data-abstracts/user/IUserDocument';
+import { IUserDocument, UserModelResponse } from '../../database/data-abstracts';
 import { generateToken } from '../../../utils/authUtils';
-import { UserValidator } from '../../validation/validators/user/index';
-import {
-  hashPassword,
-  doPasswordsMatch,
-  makeSalt,
-} from '../../../utils/passwordUtils';
+import { UserValidator } from '../../validation/validators/user';
+import { hashPassword, doPasswordsMatch, makeSalt } from '../../../utils/passwordUtils';
 
 interface IUserRequest {
   username: string;
@@ -44,12 +39,12 @@ export class UserController {
     );
 
     if (typeof validationResults === 'string') {
-      return res
-        .status(400)
-        .json(new BadRequestError('create', validationResults));
+      return res.status(400).json(new BadRequestError('create', validationResults));
     }
+
     const salt = makeSalt();
     const hashedPassword = hashPassword(body.password, salt);
+
     const result = await UserController._userDataAgent.create({
       ...body,
       password: hashedPassword,
@@ -63,11 +58,10 @@ export class UserController {
     }
 
     const token = generateToken(result._id, result.username, result.email);
+
     return res.status(201).json({
       success: true,
-      user: {
-        ...new UserModelResponse(result).getResponseModel(),
-      },
+      user: new UserModelResponse(result).getResponseModel(),
       token,
     });
   }
@@ -109,9 +103,7 @@ export class UserController {
     );
 
     if (typeof validationResults === 'string') {
-      return res
-        .status(400)
-        .json(new BadRequestError('update', validationResults));
+      return res.status(400).json(new BadRequestError('update', validationResults));
     }
 
     const result = await UserController._userDataAgent.update(_id, body);
@@ -134,9 +126,7 @@ export class UserController {
     const deletedResponse = await UserController._userDataAgent.delete(_id);
 
     if (typeof deletedResponse === 'string') {
-      return res
-        .status(400)
-        .json(new BadRequestError('delete', deletedResponse));
+      return res.status(400).json(new BadRequestError('delete', deletedResponse));
     }
 
     return res.status(200).json({
@@ -170,15 +160,10 @@ export class UserController {
     }
 
     const hashedPassword = hashPassword(newPassword, user.salt);
-    const result = await UserController._userDataAgent.reset(
-      user._id,
-      hashedPassword,
-    );
+    const result = await UserController._userDataAgent.reset(user._id, hashedPassword);
 
     if (typeof result === 'string') {
-      return res
-        .status(400)
-        .json(new BadRequestError('password-reset', result));
+      return res.status(400).json(new BadRequestError('password-reset', result));
     }
     return res.status(200).json({ success: true });
   }
@@ -193,7 +178,8 @@ export class UserController {
    * @return
    *
    * Retrieves a specific user using the provided [userId]
-   *  and attaches it to the request under the user property
+   * and attaches it to the request under the user property.
+   * It should be attached to the param handler property of an express router instance
    */
   static async getById(
     req: any,

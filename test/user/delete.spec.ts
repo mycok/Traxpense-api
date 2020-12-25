@@ -7,6 +7,7 @@ import { generateToken } from '../../utils/authUtils';
 
 const baseUrl = '/api/v1';
 describe('delete user', () => {
+  const app = new Application();
   let user: IUserDocument;
   let user1: IUserDocument;
   let token: string;
@@ -20,9 +21,7 @@ describe('delete user', () => {
         password: 'passWord#23',
       },
     ];
-    const usersData = await MongooseAccess.mongooseConnection.models.User.create(
-      users,
-    );
+    const usersData = await MongooseAccess.mongooseConnection.models.User.create(users);
     user = usersData[0];
     user1 = usersData[1];
     token = generateToken(user._id, user.username, user.email);
@@ -31,8 +30,6 @@ describe('delete user', () => {
   after(async () => {
     await MongooseAccess.mongooseConnection.models.User.deleteMany({});
   });
-
-  const app = new Application();
 
   describe('when a user sends a delete request without an auth header', () => {
     it('an un-authorized error should be returned', async () => {
@@ -79,7 +76,7 @@ describe('delete user', () => {
     });
   });
 
-  describe('when a user sends a delete request to delete himself', () => {
+  describe('when a user sends a delete request to delete himself/herself', () => {
     it('he should be successfully deleted', async () => {
       const res = await deleteUser(app, baseUrl, user.id, token);
 

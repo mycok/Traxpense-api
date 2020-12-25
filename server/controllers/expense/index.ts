@@ -4,8 +4,7 @@ import updateExpenseSchema from '../../validation/schemas/expense/update.json';
 import { Validator } from '../../validation/validators';
 import { BadRequestError } from '../../extensions/BadRequestError';
 import { ExpenseDataAgent } from '../../database/data-agents/expense/ExpenseDataAgent';
-import { IExpenseDocument } from '../../database/data-abstracts';
-import { ExpenseModelResponse } from '../../database/data-abstracts/expense/ExpenseModelResponse';
+import { IExpenseDocument, ExpenseModelResponse } from '../../database/data-abstracts';
 import { NotFoundError } from '../../extensions/NotFoundError';
 
 interface IExpenseRequest {
@@ -29,9 +28,7 @@ export class ExpenseController {
     if (typeof validationResults === 'string') {
       return res
         .status(400)
-        .json(
-          new BadRequestError('create-expense', validationResults).toJSON(),
-        );
+        .json(new BadRequestError('create-expense', validationResults).toJSON());
     }
 
     const result = await ExpenseController._expenseDataAgent.create({
@@ -104,9 +101,7 @@ export class ExpenseController {
     if (typeof validationResults === 'string') {
       return res
         .status(400)
-        .json(
-          new BadRequestError('create-expense', validationResults).toJSON(),
-        );
+        .json(new BadRequestError('create-expense', validationResults).toJSON());
     }
 
     const result = await ExpenseController._expenseDataAgent.update(_id, body);
@@ -126,14 +121,10 @@ export class ExpenseController {
       expense: { _id },
     } = req;
 
-    const deletedResponse = await ExpenseController._expenseDataAgent.delete(
-      _id,
-    );
+    const deletedResponse = await ExpenseController._expenseDataAgent.delete(_id);
 
     if (typeof deletedResponse === 'string') {
-      return res
-        .status(400)
-        .json(new BadRequestError('delete', deletedResponse));
+      return res.status(400).json(new BadRequestError('delete', deletedResponse));
     }
 
     return res.status(200).json({
