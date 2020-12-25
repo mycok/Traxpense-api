@@ -15,11 +15,10 @@
     "category": {
       "type": "object",
       "properties": {
-        "_id": { "type": "string" },
-        "name": { "type": "string", "minLength": 3 }
+        "_id": { "type": "string" }
       },
       "additionalProperties": false,
-      "required": ["_id", "name"]
+      "required": ["_id"]
     },
     "notes": {
       "type": "string"

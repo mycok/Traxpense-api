@@ -7,6 +7,7 @@ import { generateToken } from '../../utils/authUtils';
 
 const baseUrl = '/api/v1';
 describe('read user', () => {
+  const app = new Application();
   let user: IUserDocument;
   let token: string;
 
@@ -22,7 +23,6 @@ describe('read user', () => {
     await MongooseAccess.mongooseConnection.models.User.deleteMany({});
   });
 
-  const app = new Application();
   describe('when a request is made to fetch a user by the provided id', () => {
     it('a user matching the provided id should be successfully retrieved', async () => {
       const res = await chaiWithHttp
@@ -42,9 +42,7 @@ describe('read user', () => {
       );
     });
     it("a 'Not Found' error should be returned", async () => {
-      const res = await chaiWithHttp
-        .request(app.app)
-        .get(`${baseUrl}/users/${user.id}`);
+      const res = await chaiWithHttp.request(app.app).get(`${baseUrl}/users/${user.id}`);
 
       expect(res.status).to.be.equal(404);
       expect(res.body.message).to.be.equal('User not found');

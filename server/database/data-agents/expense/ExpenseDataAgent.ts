@@ -168,7 +168,7 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
           total: [
             {
               $match: {
-                incurredOn: { $gte: firstDay, $lt: lastDay },
+                incurredOn: { $gte: firstDay, $lte: lastDay },
                 recordedBy: Types.ObjectId(userId),
               },
             },
@@ -259,11 +259,7 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
    * @returns
    * Average total expenditure by category for the specified period
    */
-  async avgExpBycategory(
-    userId: string,
-    startDate: Date,
-    endDate: Date,
-  ): Promise<any> {
+  async avgExpBycategory(userId: string, startDate: Date, endDate: Date): Promise<any> {
     const firstDay = new Date(startDate);
     const lastDay = new Date(endDate);
 

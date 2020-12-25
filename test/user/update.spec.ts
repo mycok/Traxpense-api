@@ -7,6 +7,7 @@ import { generateToken } from '../../utils/authUtils';
 
 const baseUrl = '/api/v1';
 describe('update user', () => {
+  const app = new Application();
   let user: IUserDocument;
   let token: string;
 
@@ -19,14 +20,11 @@ describe('update user', () => {
   });
 
   after(async () => {
-    await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(
-      async () => {
-        await MongooseAccess.close();
-      },
-    );
+    await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(async () => {
+      await MongooseAccess.close();
+    });
   });
 
-  const app = new Application();
   describe('when a user sends an update request with valid properties', () => {
     it('the specified user object should be successfully updated', async () => {
       const res = await updateUser(

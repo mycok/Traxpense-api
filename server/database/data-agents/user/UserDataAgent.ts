@@ -3,7 +3,7 @@ import { handleErrorMessages } from '../../../../utils/dbErrorHandler';
 import { BaseDataAgent } from '../../../../utils/BaseDataAgent';
 
 export class UserDataAgent extends BaseDataAgent<IUserDocument> {
-  private _userModel: any;
+  private readonly _userModel: any;
 
   constructor() {
     super(UserModel);
@@ -12,16 +12,18 @@ export class UserDataAgent extends BaseDataAgent<IUserDocument> {
 
   async pushDuplicatesToArray(items: Array<any>, obj: any): Promise<any> {
     const arr: Array<any> = [];
+
     for (const item of items) {
       if (item === 'username' || item === 'email') {
         const user = await this._userModel.findOne({ [item]: obj[item] });
+
         if (user) arr.push({ [item]: `${obj[item]} already exists` });
       }
     }
     return arr;
   }
 
-  async reset(userId: IUserDocument, newPassword: string): Promise<any> {
+  async reset(userId: string, newPassword: string): Promise<any> {
     return await this._userModel
       .findByIdAndUpdate(userId, {
         password: newPassword,

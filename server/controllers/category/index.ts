@@ -2,21 +2,18 @@ import { Request, Response } from 'express';
 
 import { BadRequestError } from '../../extensions/BadRequestError';
 import { CategoryDataAgent } from '../../database/data-agents/category/CategoryDataAgent';
-import { ICategoryDocument } from '../../database/data-abstracts/category/ICategoryDocument';
-import { CategoryModelResponse } from '../../database/data-abstracts/category/CategoryModelResponse';
+import { ICategoryDocument, CategoryModelResponse } from '../../database/data-abstracts';
 
+// TODO: add read, update and delete methods if necessary
 export class CategoryController {
   private static _categoryDataAgent = new CategoryDataAgent();
 
-  // TODO: add read, update and delete methods
   static async create(req: Request, res: Response): Promise<any> {
     const { body } = req;
     const result = await CategoryController._categoryDataAgent.create(body);
 
     if (typeof result === 'string') {
-      return res
-        .status(400)
-        .json(new BadRequestError('create', result).toJSON());
+      return res.status(400).json(new BadRequestError('create', result).toJSON());
     }
 
     return res.status(201).json({
@@ -33,9 +30,7 @@ export class CategoryController {
       count: categories.length,
       categories:
         categories.length > 0
-          ? new CategoryModelResponse(categories[0]).getResponseModelFromList(
-            categories,
-          )
+          ? new CategoryModelResponse(categories[0]).getResponseModelFromList(categories)
           : categories,
     });
   }
