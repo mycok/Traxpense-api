@@ -13,11 +13,7 @@ describe('read expense', () => {
   let expense: any;
 
   before(async () => {
-    userResult = await createUser(
-      app,
-      baseUrl,
-      UserModelFixture.validUserObject,
-    );
+    userResult = await createUser(app, baseUrl, UserModelFixture.validUserObject);
   });
 
   before(async () => {
@@ -30,24 +26,20 @@ describe('read expense', () => {
   });
 
   after(async () => {
-    await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(
-      async () => {
-        await MongooseAccess.mongooseConnection.models.Expense.deleteMany(
-          {},
-        ).then(async () => {
-          await MongooseAccess.mongooseConnection.models.Category.deleteMany(
-            {},
-          );
-        });
-      },
-    );
+    await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(async () => {
+      await MongooseAccess.mongooseConnection.models.Expense.deleteMany({}).then(
+        async () => {
+          await MongooseAccess.mongooseConnection.models.Category.deleteMany({});
+        },
+      );
+    });
   });
 
   describe('when a request is made to list a specific expense by providing a valid expense id', () => {
     beforeEach(async () => {
       expense = await createExpense(app, baseUrl, userResult?.body?.token, {
         ...validExpenseObject,
-        category: categoryResult?.body?.category,
+        category: { _id: categoryResult?.body?.category?._id },
       });
     });
     it('an expense matching the provided id should be returned', async () => {

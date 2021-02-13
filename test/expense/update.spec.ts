@@ -13,11 +13,7 @@ describe('update expense', () => {
   let expense: any;
 
   before(async () => {
-    userResult = await createUser(
-      app,
-      baseUrl,
-      UserModelFixture.validUserObject,
-    );
+    userResult = await createUser(app, baseUrl, UserModelFixture.validUserObject);
   });
 
   before(async () => {
@@ -32,22 +28,18 @@ describe('update expense', () => {
   before(async () => {
     expense = await createExpense(app, baseUrl, userResult.body.token, {
       ...validExpenseObject,
-      category: categoryResult?.body?.category,
+      category: { _id: categoryResult?.body?.category?._id },
     });
   });
 
   after(async () => {
-    await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(
-      async () => {
-        await MongooseAccess.mongooseConnection.models.Expense.deleteMany(
-          {},
-        ).then(async () => {
-          await MongooseAccess.mongooseConnection.models.Category.deleteMany(
-            {},
-          );
-        });
-      },
-    );
+    await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(async () => {
+      await MongooseAccess.mongooseConnection.models.Expense.deleteMany({}).then(
+        async () => {
+          await MongooseAccess.mongooseConnection.models.Category.deleteMany({});
+        },
+      );
+    });
   });
 
   describe('when a request is made to update a specific expense by providing a valid expense id', () => {
@@ -56,7 +48,7 @@ describe('update expense', () => {
         app,
         baseUrl,
         userResult.body.token,
-        expense.body.expense._id,
+        expense?.body?.expense?._id,
         { title: 'updated-expense' },
       );
 
@@ -70,7 +62,7 @@ describe('update expense', () => {
         app,
         baseUrl,
         userResult.body.token,
-        expense.body.expense._id,
+        expense?.body?.expense?._id,
         { title: 456 },
       );
 
