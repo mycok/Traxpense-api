@@ -10,10 +10,7 @@ export class AuthValidator extends BaseValidator {
     const isValid = ajvValidate(data);
 
     if (!isValid) {
-      return this.generateValidationErrorMessages(
-        ajvValidate.errors,
-        pathPrefix,
-      );
+      return this.generateValidationErrorMessages(ajvValidate.errors, pathPrefix);
     }
     return isValid as boolean;
   }

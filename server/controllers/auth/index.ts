@@ -25,21 +25,15 @@ export class AuthController {
     );
 
     if (typeof validationResults === 'string') {
-      return res
-        .status(400)
-        .json(new BadRequestError('sign-in', validationResults));
+      return res.status(400).json(new BadRequestError('sign-in', validationResults));
     }
 
     const user: any = await UserModel.findOne({
       email: body.email,
-    }).catch((err) => res
-      .status(400)
-      .json(new BadRequestError('sign-in', handleErrorMessages(err))));
+    }).catch((err) => res.status(400).json(new BadRequestError('sign-in', handleErrorMessages(err))));
 
     if (!user) {
-      return res
-        .status(404)
-        .json(new NotFoundError('sign-in', 'Email not found'));
+      return res.status(404).json(new NotFoundError('sign-in', 'Email not found'));
     }
 
     if (!doPasswordsMatch(body.password, user.password, user.salt)) {
