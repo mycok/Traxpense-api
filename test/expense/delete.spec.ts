@@ -13,11 +13,7 @@ describe('delete expense', () => {
   let expense: any;
 
   before(async () => {
-    userResult = await createUser(
-      app,
-      baseUrl,
-      UserModelFixture.validUserObject,
-    );
+    userResult = await createUser(app, baseUrl, UserModelFixture.validUserObject);
   });
 
   before(async () => {
@@ -30,17 +26,13 @@ describe('delete expense', () => {
   });
 
   after(async () => {
-    await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(
-      async () => {
-        await MongooseAccess.mongooseConnection.models.Expense.deleteMany(
-          {},
-        ).then(async () => {
-          await MongooseAccess.mongooseConnection.models.Category.deleteMany(
-            {},
-          );
-        });
-      },
-    );
+    await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(async () => {
+      await MongooseAccess.mongooseConnection.models.Expense.deleteMany({}).then(
+        async () => {
+          await MongooseAccess.mongooseConnection.models.Category.deleteMany({});
+        },
+      );
+    });
   });
 
   describe('when a request is made to delete a specific expense by providing a valid expense id', () => {
@@ -50,6 +42,8 @@ describe('delete expense', () => {
         category: categoryResult?.body?.category,
       });
     });
+
+    console.log('expenseeeeeeeeeeee', categoryResult?.body?.category);
     it('an expense matching the provided id should be deleted', async () => {
       const res = await deleteExpense(
         app,

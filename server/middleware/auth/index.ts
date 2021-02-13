@@ -7,10 +7,7 @@ function verifyToken(req: any, res: any, token: string, next: Function) {
 
     return next();
   } catch (err) {
-    if (
-      err instanceof JsonWebTokenError
-      && err.message === 'invalid signature'
-    ) {
+    if (err instanceof JsonWebTokenError && err.message === 'invalid signature') {
       return res.status(400).json({
         success: false,
         message: 'Invalid token signature',

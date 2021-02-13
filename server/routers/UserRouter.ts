@@ -5,10 +5,7 @@ import { authenticate, authorize } from '../middleware/auth';
 export const userRouter: Router = express.Router();
 
 userRouter.param('userId', UserController.getById);
-userRouter
-  .route('/api/v1/users')
-  .post(UserController.create)
-  .get(UserController.list);
+userRouter.route('/api/v1/users').post(UserController.create).get(UserController.list);
 
 userRouter
   .route('/api/v1/users/:userId')

@@ -24,9 +24,5 @@ export abstract class BaseValidator {
     }
   }
 
-  abstract validate<T>(
-    schema: any,
-    pathPrefix: string,
-    data: T
-  ): boolean | string;
+  abstract validate<T>(schema: any, pathPrefix: string, data: T): boolean | string;
 }
