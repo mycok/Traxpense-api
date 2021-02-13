@@ -11,25 +11,17 @@ describe('create expense', () => {
   let userResult: any;
 
   before(async () => {
-    userResult = await createUser(
-      app,
-      baseUrl,
-      UserModelFixture.validUserObject,
-    );
+    userResult = await createUser(app, baseUrl, UserModelFixture.validUserObject);
   });
 
   after(async () => {
-    await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(
-      async () => {
-        await MongooseAccess.mongooseConnection.models.Expense.deleteMany(
-          {},
-        ).then(async () => {
-          await MongooseAccess.mongooseConnection.models.Category.deleteMany(
-            {},
-          );
-        });
-      },
-    );
+    await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(async () => {
+      await MongooseAccess.mongooseConnection.models.Expense.deleteMany({}).then(
+        async () => {
+          await MongooseAccess.mongooseConnection.models.Category.deleteMany({});
+        },
+      );
+    });
   });
 
   describe('when a request contains all the valid required properties', () => {
@@ -46,7 +38,7 @@ describe('create expense', () => {
     it('an expense should be successfully recorded', async () => {
       const res = await createExpense(app, baseUrl, userResult?.body?.token, {
         ...validExpenseObject,
-        category: categoryResult?.body?.category,
+        category: { _id: categoryResult?.body?.category?._id },
       });
 
       expect(res.status).to.be.equal(201);
@@ -60,12 +52,7 @@ describe('create expense', () => {
     };
 
     it('a bad request error should be returned', async () => {
-      const res = await createExpense(
-        app,
-        baseUrl,
-        userResult.body.token,
-        expense,
-      );
+      const res = await createExpense(app, baseUrl, userResult.body.token, expense);
 
       expect(res.status).to.be.equal(400);
     });

@@ -12,11 +12,7 @@ describe('preview aggregated expenses', () => {
   let categoryResult: any;
 
   before(async () => {
-    userResult = await createUser(
-      app,
-      baseUrl,
-      UserModelFixture.validUserObject,
-    );
+    userResult = await createUser(app, baseUrl, UserModelFixture.validUserObject);
   });
 
   before(async () => {
@@ -31,22 +27,18 @@ describe('preview aggregated expenses', () => {
   before(async () => {
     await createExpense(app, baseUrl, userResult.body.token, {
       ...validExpenseObject,
-      category: categoryResult?.body?.category,
+      category: { _id: categoryResult?.body?.category?._id },
     });
   });
 
   after(async () => {
-    await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(
-      async () => {
-        await MongooseAccess.mongooseConnection.models.Expense.deleteMany(
-          {},
-        ).then(async () => {
-          await MongooseAccess.mongooseConnection.models.Category.deleteMany(
-            {},
-          );
-        });
-      },
-    );
+    await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(async () => {
+      await MongooseAccess.mongooseConnection.models.Expense.deleteMany({}).then(
+        async () => {
+          await MongooseAccess.mongooseConnection.models.Category.deleteMany({});
+        },
+      );
+    });
   });
 
   describe('when a request is made to preview aggregated expenses for the current month', () => {

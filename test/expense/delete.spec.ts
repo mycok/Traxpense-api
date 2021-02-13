@@ -39,11 +39,10 @@ describe('delete expense', () => {
     beforeEach(async () => {
       expense = await createExpense(app, baseUrl, userResult.body.token, {
         ...validExpenseObject,
-        category: categoryResult?.body?.category,
+        category: { _id: categoryResult?.body?.category?._id },
       });
     });
 
-    console.log('expenseeeeeeeeeeee', categoryResult?.body?.category);
     it('an expense matching the provided id should be deleted', async () => {
       const res = await deleteExpense(
         app,

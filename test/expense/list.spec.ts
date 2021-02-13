@@ -2,11 +2,7 @@ import { Application } from '../../server/app/Application';
 import { MongooseAccess } from '../../server/database/adaptors/MongoAccess';
 import UserModelFixture, { createUser } from '../user/fixtures';
 import { createCategory, validCategoryObject } from '../category/fixtures';
-import {
-  validExpenseObject,
-  listExpenses,
-  listExpensesWithQueryStrs,
-} from './fixtures';
+import { validExpenseObject, listExpenses, listExpensesWithQueryStrs } from './fixtures';
 import { expect } from '..';
 
 const baseUrl = '/api/v1';
@@ -18,11 +14,7 @@ describe('list expenses', () => {
   let expList: any[];
 
   before(async () => {
-    userResult = await createUser(
-      app,
-      baseUrl,
-      UserModelFixture.validUserObject,
-    );
+    userResult = await createUser(app, baseUrl, UserModelFixture.validUserObject);
   });
 
   before(async () => {
@@ -38,25 +30,19 @@ describe('list expenses', () => {
     const expenses = Array(11).fill({
       ...validExpenseObject,
       recordedBy: userResult.body.user.id,
-      category: categoryResult.body.category,
+      category: { _id: categoryResult?.body?.category?._id },
     });
-    expList = await MongooseAccess.mongooseConnection.models.Expense.create(
-      expenses,
-    );
+    expList = await MongooseAccess.mongooseConnection.models.Expense.create(expenses);
   });
 
   after(async () => {
-    await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(
-      async () => {
-        await MongooseAccess.mongooseConnection.models.Expense.deleteMany(
-          {},
-        ).then(async () => {
-          await MongooseAccess.mongooseConnection.models.Category.deleteMany(
-            {},
-          );
-        });
-      },
-    );
+    await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(async () => {
+      await MongooseAccess.mongooseConnection.models.Expense.deleteMany({}).then(
+        async () => {
+          await MongooseAccess.mongooseConnection.models.Category.deleteMany({});
+        },
+      );
+    });
   });
 
   describe('when a request is made to list all the available expenses', () => {

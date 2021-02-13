@@ -13,11 +13,7 @@ describe('scattered plot expense data', () => {
   let expense: any;
 
   before(async () => {
-    userResult = await createUser(
-      app,
-      baseUrl,
-      UserModelFixture.validUserObject,
-    );
+    userResult = await createUser(app, baseUrl, UserModelFixture.validUserObject);
   });
 
   before(async () => {
@@ -32,29 +28,25 @@ describe('scattered plot expense data', () => {
   before(async () => {
     expense = await createExpense(app, baseUrl, userResult.body.token, {
       ...validExpenseObject,
-      category: categoryResult?.body?.category,
+      category: { _id: categoryResult?.body?.category?._id },
     });
   });
 
   after(async () => {
-    await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(
-      async () => {
-        await MongooseAccess.mongooseConnection.models.Expense.deleteMany(
-          {},
-        ).then(async () => {
-          await MongooseAccess.mongooseConnection.models.Category.deleteMany(
-            {},
-          );
-        });
-      },
-    );
+    await MongooseAccess.mongooseConnection.models.User.deleteMany({}).then(async () => {
+      await MongooseAccess.mongooseConnection.models.Expense.deleteMany({}).then(
+        async () => {
+          await MongooseAccess.mongooseConnection.models.Category.deleteMany({});
+        },
+      );
+    });
   });
 
   describe('when a request is made to view scattered expenses data aggregated by month and amount for the specified period', () => {
     it('an aggregated expenses response should be returned', async () => {
       const res = await aggExpenses(
         app,
-        `${baseUrl}/expenses/plot/?period=${expense.body.expense.incurredOn}`,
+        `${baseUrl}/expenses/plot/?period=${expense?.body?.expense?.incurredOn}`,
         userResult.body.token,
       );
 
