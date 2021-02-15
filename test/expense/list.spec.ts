@@ -29,7 +29,7 @@ describe('list expenses', () => {
   before(async () => {
     const expenses = Array(11).fill({
       ...validExpenseObject,
-      recordedBy: userResult.body.user.id,
+      recordedBy: userResult?.body?.user?._id,
       category: { _id: categoryResult?.body?.category?._id },
     });
     expList = await MongooseAccess.mongooseConnection.models.Expense.create(expenses);
@@ -47,7 +47,7 @@ describe('list expenses', () => {
 
   describe('when a request is made to list all the available expenses', () => {
     it('a paginated expense list of 10 should be returned, that is if a user has more than 10 expense records', async () => {
-      const res = await listExpenses(app, baseUrl, userResult.body.token);
+      const res = await listExpenses(app, baseUrl, userResult?.body?.token);
       cursor = res.body.cursor;
 
       expect(res.status).to.be.equal(200);
@@ -75,7 +75,7 @@ describe('list expenses', () => {
   describe('with the date filter provided', () => {
     it('a paginated expense list of not more than 10 should be returned inclusive of the startDate', async () => {
       const startDate = `${expList[expList.length - 1].incurredOn}`;
-      const query = `startDate=${startDate}&endDate=${startDate}`;
+      const query = `startDate=${new Date(startDate)}&endDate=${startDate}`;
       const res = await listExpensesWithQueryStrs(
         app,
         baseUrl,
