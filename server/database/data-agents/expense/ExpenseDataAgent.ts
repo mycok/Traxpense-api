@@ -29,26 +29,35 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
     endDate?: Date,
     cursor?: string,
   ): Promise<IExpenseDocument[]> {
-    let cursorQuery = {};
-    let dateQuery = {};
+    const firstDay = startDate && new Date(startDate);
+    const lastDay = endDate && new Date(endDate);
 
-    if (cursor) {
-      cursorQuery = { _id: { $lt: cursor } };
+    let query: any = { $and: [{ recordedBy: userId }] };
+
+    if (firstDay && lastDay) {
+      query = {
+        $and: [{ recordedBy: userId }, { incurredOn: { $gte: firstDay, $lte: lastDay } }],
+      };
     }
 
-    if (startDate && endDate) {
-      dateQuery = {
+    if (cursor) {
+      query = {
+        $and: [{ recordedBy: userId }, { _id: { $lt: cursor } }],
+      };
+    }
+
+    if (firstDay && lastDay && cursor) {
+      query = {
         $and: [
-          { incurredOn: { $gte: startDate, $lte: endDate } },
           { recordedBy: userId },
+          { incurredOn: { $gte: firstDay, $lte: lastDay } },
+          { _id: { $lt: cursor } },
         ],
       };
     }
+
     const expenses: IExpenseDocument[] = await this._expenseModel
-      .find({
-        ...dateQuery,
-        ...cursorQuery,
-      })
+      .find(query)
       .populate('recordedBy', 'username email')
       .populate('category', '_id title')
       .limit(limit + 1)
