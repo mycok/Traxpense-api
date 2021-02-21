@@ -27,7 +27,7 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
     userId: string,
     startDate?: Date,
     endDate?: Date,
-    cursor?: string,
+    cursor?: Date,
   ): Promise<IExpenseDocument[]> {
     const firstDay = startDate && new Date(startDate);
     const lastDay = endDate && new Date(endDate);
@@ -42,7 +42,7 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
 
     if (cursor) {
       query = {
-        $and: [{ recordedBy: userId }, { _id: { $lt: cursor } }],
+        $and: [{ recordedBy: userId }, { incurredOn: { $lt: cursor } }],
       };
     }
 
@@ -51,7 +51,7 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
         $and: [
           { recordedBy: userId },
           { incurredOn: { $gte: firstDay, $lte: lastDay } },
-          { _id: { $lt: cursor } },
+          { incurredOn: { $lt: cursor } },
         ],
       };
     }
