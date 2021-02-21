@@ -73,7 +73,7 @@ export class ExpenseController {
       success: true,
       count: expenses.length,
       expenses,
-      cursor: hasNextPage ? expenses[expenses.length - 1]._id : 'done',
+      cursor: hasNextPage ? expenses[expenses.length - 1].incurredOn : 'done',
       hasNextPage,
     });
   }
