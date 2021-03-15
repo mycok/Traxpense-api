@@ -22,4 +22,5 @@ export async function listCategories(app: any, baseUrl: string, token: string) {
 
 export const validCategoryObject = {
   title: 'laptops',
+  createdByAdmin: true,
 };

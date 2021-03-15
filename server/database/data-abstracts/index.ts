@@ -6,7 +6,7 @@ export { ExpenseModel } from './expense/ExpenseModel';
 export { IExpenseDocument } from './expense/IExpenseDocument';
 export { ExpenseSchema } from './expense/ExpenseSchema';
 export { ExpenseModelResponse } from './expense/ExpenseModelResponse';
-export { CategoryModel } from './category/CategoryModel';
+export { CategoryModel, ICategoryModel } from './category/CategoryModel';
 export { ICategoryDocument } from './category/ICategoryDocument';
 export { CategorySchema } from './category/CategorySchema';
 export { CategoryModelResponse } from './category/CategoryModelResponse';

@@ -9,3 +9,6 @@ categoryRouter
   .route('/api/v1/categories')
   .post(authenticate, CategoryController.create)
   .get(authenticate, CategoryController.list);
+categoryRouter
+  .route('/api/v1/categories/by/user')
+  .get(authenticate, CategoryController.listByUser);
