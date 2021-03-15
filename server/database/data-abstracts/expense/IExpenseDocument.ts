@@ -7,7 +7,7 @@ export interface IExpenseDocument extends mongoose.Document {
   category: string;
   incurredOn: Date;
   notes?: string;
-  recordedBy?: any;
+  recordedBy?: mongoose.Schema.Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 }
