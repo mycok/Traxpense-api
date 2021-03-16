@@ -9,6 +9,7 @@ import { userRouter } from '../routers/UserRouter';
 import { authRouter } from '../routers/AuthRouter';
 import { expenseRouter } from '../routers/ExpenseRouter';
 import { categoryRouter } from '../routers/CategoryRouter';
+import { walletRouter } from '../routers/WalletRouter';
 
 import documentation from '../../openapi.json';
 
@@ -37,6 +38,7 @@ export class Application {
     this.app.use(authRouter);
     this.app.use(expenseRouter);
     this.app.use(categoryRouter);
+    this.app.use(walletRouter);
   }
 
   private clientErrorHandler(
