@@ -10,3 +10,6 @@ export { CategoryModel, ICategoryModel } from './category/CategoryModel';
 export { ICategoryDocument } from './category/ICategoryDocument';
 export { CategorySchema } from './category/CategorySchema';
 export { CategoryModelResponse } from './category/CategoryModelResponse';
+export { WalletModel, IWalletModel } from './wallet/WalletModel';
+export { IWalletDocument } from './wallet/IWalletDocument';
+export { WalletSchema } from './wallet/WalletSchema';
