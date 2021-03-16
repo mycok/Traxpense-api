@@ -9,7 +9,6 @@ export const WalletSchema: Schema = new Schema(
     initialAmount: {
       type: Number,
       default: 0,
-      required: true,
     },
     currentBalance: {
       type: Number,

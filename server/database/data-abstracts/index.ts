@@ -13,3 +13,4 @@ export { CategoryModelResponse } from './category/CategoryModelResponse';
 export { WalletModel, IWalletModel } from './wallet/WalletModel';
 export { IWalletDocument } from './wallet/IWalletDocument';
 export { WalletSchema } from './wallet/WalletSchema';
+export { WalletModelResponse } from './wallet/WalletModelResponse';
