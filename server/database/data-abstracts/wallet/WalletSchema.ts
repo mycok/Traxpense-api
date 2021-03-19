@@ -8,10 +8,12 @@ export const WalletSchema: Schema = new Schema(
     },
     initialAmount: {
       type: Number,
+      min: 0,
       default: 0,
     },
     currentBalance: {
       type: Number,
+      min: 0,
       default() {
         return this.initialAmount;
       },
