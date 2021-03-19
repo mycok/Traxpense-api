@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { BadRequestError } from '../../extensions/BadRequestError';
 import { WalletDataAgent } from '../../database/data-agents/wallet/WalletDataAgent';
 import { IWalletDocument, WalletModelResponse } from '../../database/data-abstracts';
+import { NotFoundError } from '../../extensions/NotFoundError';
 
 // TODO: add read, update and delete methods if necessary
 export class WalletController {
@@ -26,5 +27,29 @@ export class WalletController {
       success: true,
       wallet: new WalletModelResponse(result).getResponseModel(),
     });
+  }
+
+  static async read(req: any, res: Response): Promise<any> {
+    const { wallet } = req;
+
+    return res.status(200).json(new WalletModelResponse(wallet).getResponseModel());
+  }
+
+  static async getById(
+    req: any,
+    res: Response,
+    next: Function,
+    walletId: string,
+  ): Promise<any> {
+    const wallet = await WalletController._walletDataAgent.getById(walletId);
+
+    if (!wallet) {
+      return res
+        .status(404)
+        .json(new NotFoundError('getById', 'Wallet not found').toJSON());
+    }
+    req.wallet = wallet;
+
+    return next();
   }
 }
