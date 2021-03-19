@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://api.mern-skeleton/server/validation/schemas/wallet/update.json",
+  "title": "Update Wallet Schema",
+  "description": "For validating client provided wallet object on update",
+  "type": "object",
+  "properties": {
+    "currentBalance": {
+      "type": "number",
+      "minimum": 0
+    },
+    "type": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

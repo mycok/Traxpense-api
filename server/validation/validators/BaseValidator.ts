@@ -20,7 +20,7 @@ export abstract class BaseValidator {
         return `The '${pathPrefix}${error.dataPath}' field should contain atleast 8 characters with a lowercase, uppercase, a number and a special character`;
 
       default:
-        return 'Invalid error object';
+        return 'Invalid value error';
     }
   }
 
