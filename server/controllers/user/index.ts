@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { EventEmitter } from 'events';
 
 import userSchema from '../../validation/schemas/user/create.json';
 import profileSchema from '../../validation/schemas/user/profile.json';
@@ -10,8 +11,9 @@ import { IUserDocument, UserModelResponse } from '../../database/data-abstracts'
 import { generateToken } from '../../../utils/authUtils';
 import { UserValidator } from '../../validation/validators/user';
 import { hashPassword, doPasswordsMatch, makeSalt } from '../../../utils/passwordUtils';
+import { WalletController } from '../wallet';
 
-interface IUserRequest {
+type UserRequest = {
   username: string;
   email: string;
   password: string;
@@ -25,14 +27,27 @@ interface IUserRequest {
       last: string;
     };
   };
-}
+};
 
-export class UserController {
-  private static _userDataAgent = new UserDataAgent();
+class UserController extends EventEmitter {
+  private _userDataAgent: UserDataAgent;
 
-  static async create(req: Request, res: Response): Promise<any> {
+  constructor(dataAgent: UserDataAgent) {
+    super();
+    this._userDataAgent = dataAgent;
+    this.create = this.create.bind(this);
+    this.list = this.list.bind(this);
+    this.read = this.read.bind(this);
+    this.update = this.update.bind(this);
+    this.delete = this.delete.bind(this);
+    this.passwordReset = this.passwordReset.bind(this);
+    this.getById = this.getById.bind(this);
+    this.checkDuplicatesOnUpdate = this.checkDuplicatesOnUpdate.bind(this);
+  }
+
+  async create(req: any, res: Response): Promise<any> {
     const { body } = req;
-    const validationResults = new UserValidator().validate<IUserRequest>(
+    const validationResults = new UserValidator().validate<UserRequest>(
       [userSchema, profileSchema],
       'user',
       body,
@@ -45,7 +60,7 @@ export class UserController {
     const salt = makeSalt();
     const hashedPassword = hashPassword(body.password, salt);
 
-    const result = await UserController._userDataAgent.create({
+    const result = await this._userDataAgent.create({
       ...body,
       password: hashedPassword,
       salt,
@@ -58,6 +73,8 @@ export class UserController {
     }
 
     const token = generateToken(result._id, result.username, result.email);
+    req.auth = result;
+    this.emit('new-user-added', req, res);
 
     return res.status(201).json({
       success: true,
@@ -66,8 +83,8 @@ export class UserController {
     });
   }
 
-  static async list(req: Request, res: Response): Promise<any> {
-    const users: IUserDocument[] = await UserController._userDataAgent.list();
+  async list(req: Request, res: Response): Promise<any> {
+    const users: IUserDocument[] = await this._userDataAgent.list();
 
     return res.status(200).json({
       success: true,
@@ -79,7 +96,7 @@ export class UserController {
     });
   }
 
-  static async read(req: any, res: Response): Promise<any> {
+  async read(req: any, res: Response): Promise<any> {
     const { user } = req;
 
     return res.status(200).json({
@@ -90,13 +107,13 @@ export class UserController {
     });
   }
 
-  static async update(req: any, res: Response): Promise<any> {
+  async update(req: any, res: Response): Promise<any> {
     const {
       body,
       user: { _id },
     } = req;
 
-    const validationResults = new UserValidator().validate<IUserRequest>(
+    const validationResults = new UserValidator().validate<UserRequest>(
       [updateSchema, profileSchema],
       'user',
       body,
@@ -106,7 +123,7 @@ export class UserController {
       return res.status(400).json(new BadRequestError('update', validationResults));
     }
 
-    const result = await UserController._userDataAgent.update(_id, body);
+    const result = await this._userDataAgent.update(_id, body);
 
     if (typeof result !== 'object') {
       return res.status(400).json(new BadRequestError('update', result));
@@ -118,12 +135,12 @@ export class UserController {
     });
   }
 
-  static async delete(req: any, res: Response): Promise<any> {
+  async delete(req: any, res: Response): Promise<any> {
     const {
       user: { _id },
     } = req;
 
-    const deletedResponse = await UserController._userDataAgent.delete(_id);
+    const deletedResponse = await this._userDataAgent.delete(_id);
 
     if (typeof deletedResponse === 'string') {
       return res.status(400).json(new BadRequestError('delete', deletedResponse));
@@ -135,7 +152,7 @@ export class UserController {
     });
   }
 
-  static async passwordReset(req: any, res: Response): Promise<any> {
+  async passwordReset(req: any, res: Response): Promise<any> {
     const {
       user,
       body: { oldPassword, newPassword },
@@ -160,7 +177,7 @@ export class UserController {
     }
 
     const hashedPassword = hashPassword(newPassword, user.salt);
-    const result = await UserController._userDataAgent.reset(user._id, hashedPassword);
+    const result = await this._userDataAgent.reset(user._id, hashedPassword);
 
     if (typeof result === 'string') {
       return res.status(400).json(new BadRequestError('password-reset', result));
@@ -181,13 +198,8 @@ export class UserController {
    * and attaches it to the request under the user property.
    * It should be attached to the param handler property of an express router instance
    */
-  static async getById(
-    req: any,
-    res: Response,
-    next: Function,
-    userId: string,
-  ): Promise<any> {
-    const user = await UserController._userDataAgent.getById(userId);
+  async getById(req: any, res: Response, next: Function, userId: string): Promise<any> {
+    const user = await this._userDataAgent.getById(userId);
 
     if (!user) {
       return res
@@ -208,14 +220,14 @@ export class UserController {
    *
    * Checks for username and email duplicates during an update operation
    */
-  static async checkDuplicatesOnUpdate(
+  async checkDuplicatesOnUpdate(
     req: Request,
     res: Response,
     next: Function,
   ): Promise<any> {
     const { body } = req;
     const propertiesToUpdate = Object.keys(body);
-    const duplicates: Array<any> = await UserController._userDataAgent.pushDuplicatesToArray(
+    const duplicates: Array<any> = await this._userDataAgent.pushDuplicatesToArray(
       propertiesToUpdate,
       body,
     );
@@ -230,3 +242,6 @@ export class UserController {
     return next();
   }
 }
+
+export const userController = new UserController(new UserDataAgent());
+userController.on('new-user-added', WalletController.create);
