@@ -67,14 +67,14 @@ export class WalletController {
     req: any,
     res: Response,
     next: Function,
-    walletId: string,
+    ownerId: string,
   ): Promise<Response> {
-    const wallet = await WalletController._walletDataAgent.getById(walletId);
+    const wallet = await WalletController._walletDataAgent.getByOwner(ownerId);
 
     if (!wallet) {
       return res
         .status(404)
-        .json(new NotFoundError('getById', 'Wallet not found').toJSON());
+        .json(new NotFoundError('getByOwner', 'Wallet not found').toJSON());
     }
     req.wallet = wallet;
 
