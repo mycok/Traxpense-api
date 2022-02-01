@@ -1,23 +1,23 @@
 import express, { Router } from 'express';
-import { UserController } from '../controllers/user';
+import { userController } from '../controllers/user';
 import { authenticate, authorize } from '../middleware/auth';
 
 export const userRouter: Router = express.Router();
 
-userRouter.param('userId', UserController.getById);
-userRouter.route('/api/v1/users').post(UserController.create).get(UserController.list);
+userRouter.param('userId', userController.getById);
+userRouter.route('/api/v1/users').post(userController.create).get(userController.list);
 
 userRouter
   .route('/api/v1/users/:userId')
-  .get(authenticate, authorize, UserController.read)
+  .get(authenticate, authorize, userController.read)
   .patch(
     authenticate,
     authorize,
-    UserController.checkDuplicatesOnUpdate,
-    UserController.update,
+    userController.checkDuplicatesOnUpdate,
+    userController.update,
   )
-  .delete(authenticate, authorize, UserController.delete);
+  .delete(authenticate, authorize, userController.delete);
 
 userRouter
   .route('/api/v1/reset/:userId')
-  .patch(authenticate, authorize, UserController.passwordReset);
+  .patch(authenticate, authorize, userController.passwordReset);
