@@ -11,7 +11,7 @@ import walletUpdateSchema from '../../validation/schemas/wallet/update.json';
 export class WalletController {
   private static _walletDataAgent = new WalletDataAgent();
 
-  static async create(req: any, res: Response): Promise<any> {
+  static async create(req: any, res: Response) {
     const { auth } = req;
     const walletRequest: any = { owner: auth._id };
 
@@ -42,7 +42,7 @@ export class WalletController {
         .json(new BadRequestError('create-expense', validationResults).toJSON());
     }
 
-    const result = await WalletController._walletDataAgent.update(_id, body);
+    const result = await WalletController._walletDataAgent.update(_id, body, false);
 
     if (typeof result !== 'object') {
       return res.status(400).json(new BadRequestError('update', result));
@@ -51,6 +51,15 @@ export class WalletController {
     return res.status(200).json({
       success: true,
       wallet: new WalletModelResponse(result).getResponseModel(),
+    });
+  }
+
+  static async updateOnNewExpense(req: any, Res: Response) {
+    const { auth: _id, expense } = req;
+
+    const wallet = await WalletController._walletDataAgent.getByOwner(_id);
+    await WalletController._walletDataAgent.update(wallet?._id as string, {
+      currentBalance: expense.amount,
     });
   }
 

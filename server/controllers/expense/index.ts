@@ -8,7 +8,7 @@ import { BadRequestError } from '../../extensions/BadRequestError';
 import { ExpenseDataAgent } from '../../database/data-agents/expense/ExpenseDataAgent';
 import { IExpenseDocument, ExpenseModelResponse } from '../../database/data-abstracts';
 import { NotFoundError } from '../../extensions/NotFoundError';
-// import { WalletController } from '../wallet';
+import { WalletController } from '../wallet';
 
 type ExpenseRequest = {
   title: string;
@@ -62,7 +62,8 @@ class ExpenseController extends EventEmitter {
         .json(new BadRequestError('create-expense', result as string).toJSON());
     }
 
-    // this.emit('new-expense-added', req);
+    req.expense = result;
+    this.emit('new-expense-added', req, res);
 
     return res.status(201).json({
       success: true,
@@ -255,4 +256,4 @@ class ExpenseController extends EventEmitter {
 }
 
 export const expenseController = new ExpenseController(new ExpenseDataAgent());
-// expenseController.on('new-expense-added', WalletController.update);
+expenseController.on('new-expense-added', WalletController.updateOnNewExpense);
