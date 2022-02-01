@@ -10,16 +10,10 @@ export class WalletDataAgent extends BaseDataAgent<IWalletDocument> {
     this._walletModel = WalletModel;
   }
 
-  async getById(id: string): Promise<IWalletDocument | null> {
-    const result = await this._walletModel
-      .findById(id)
-      .populate('owner', '_id username email');
-
-    return result;
-  }
-
   async getByOwner(ownerId: string): Promise<IWalletDocument | null> {
-    const result = await this._walletModel.findOne({ owner: ownerId });
+    const result = await this._walletModel
+      .findOne({ owner: ownerId })
+      .populate('owner', '_id username email');
 
     return result;
   }
