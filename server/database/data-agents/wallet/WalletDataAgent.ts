@@ -18,11 +18,23 @@ export class WalletDataAgent extends BaseDataAgent<IWalletDocument> {
     return result;
   }
 
-  async update(id: string, propsToUpdate: any): Promise<IWalletDocument | string> {
+  async getByOwner(ownerId: string): Promise<IWalletDocument | null> {
+    const result = await this._walletModel.findOne({ owner: ownerId });
+
+    return result;
+  }
+
+  async update(
+    id: string,
+    propsToUpdate: any,
+    deductible = true,
+  ): Promise<IWalletDocument | string> {
     const updates = { ...propsToUpdate };
     const walletToUpdate = await this._walletModel.findById(id);
 
-    if (Object.keys(updates).includes('currentBalance')) {
+    if (deductible) {
+      updates.currentBalance = (walletToUpdate?.currentBalance as number) - updates.currentBalance;
+    } else {
       updates.currentBalance = walletToUpdate?.currentBalance + updates.currentBalance;
     }
 
