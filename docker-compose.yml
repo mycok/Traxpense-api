@@ -1,17 +1,20 @@
-version: "3"
+version: "3.8"
 services:
-    app:
-      container_name: app
+    api:
+      container_name: traxpense
       build: ./
       restart: always
       ports:
-        - "3000:8081"
-      links:
+        - "8081:8081"
+      depends_on:
         - mongo
     mongo:
       container_name: mongo
-      image: mongo
+      image: mongo:latest
       volumes:
         - ./data:/data/db
       ports:
         - "27017:27017"
+      restart: always
+volumes:
+  data:
