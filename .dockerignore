@@ -21,4 +21,5 @@ LICENSE
 *.eslint
 *.log
 *.env
+.env.*
 
