@@ -25,7 +25,7 @@ jobs:
 
       # Runs a set of commands to build and tag a docker image
       - name: Build and tag image
-        run: docker build -t "docker.pkg.github.com/$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')/:$GITHUB_RUN_NUMBER"
+        run: docker build -t "docker.pkg.github.com/$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')/prod-deployment:$GITHUB_RUN_NUMBER"
         
       # Runs a set of commands for docker authentication / login
       - name: Docker login
@@ -36,6 +36,6 @@ jobs:
           
       # Publish to github package repository / GPR
       - name: Publish to GPR
-        run: docker push "docker.pkg.github.com/$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')/:$GITHUB_RUN_NUMBER"
+        run: docker push "docker.pkg.github.com/$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')/prod-deployment:$GITHUB_RUN_NUMBER"
         
       
