@@ -23,10 +23,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Prepare to build and tag image!
-
       # Runs a set of commands to build and tag a docker image
       - name: Build and tag image
         run: docker build -t "docker.pkg.github.com/$(ech $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')/multi-stage:$GITHUB_RUN_NUMBER"
