@@ -3,6 +3,14 @@ import { Types } from 'mongoose';
 import { IExpenseDocument, ExpenseModel } from '../../data-abstracts';
 import { BaseDataAgent } from '../../../../utils/BaseDataAgent';
 
+type DateRangeSearchParams = {
+  userId: string;
+  limit: number;
+  startDate?: Date;
+  endDate?: Date;
+  cursor?: Date;
+};
+
 // TODO: add error handling for all aggregate data handlers
 export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
   private _expenseModel: any;
@@ -22,15 +30,15 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
     by sending a query without any filters
    */
 
-  async list(
-    limit: number,
-    userId: string,
-    startDate?: Date,
-    endDate?: Date,
-    cursor?: Date,
-  ): Promise<IExpenseDocument[]> {
-    const firstDay = startDate && new Date(startDate);
-    const lastDay = endDate && new Date(endDate);
+  async list({
+    userId,
+    limit,
+    startDate,
+    endDate,
+    cursor,
+  }: DateRangeSearchParams): Promise<IExpenseDocument[]> {
+    const firstDay = startDate && new Date(startDate).toISOString();
+    const lastDay = endDate && new Date(endDate).toISOString();
 
     let query: any = { $and: [{ recordedBy: userId }] };
 

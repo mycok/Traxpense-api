@@ -79,13 +79,13 @@ class ExpenseController extends EventEmitter {
       query: { cursor, startDate, endDate },
     } = req;
 
-    let expenses: IExpenseDocument[] = await this._expenseDataAgent.list(
+    let expenses: IExpenseDocument[] = await this._expenseDataAgent.list({
+      userId: auth._id,
       limit,
-      auth._id,
       startDate,
       endDate,
       cursor,
-    );
+    });
 
     if (expenses.length > limit) {
       hasNextPage = true;
