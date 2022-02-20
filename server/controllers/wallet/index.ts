@@ -21,7 +21,10 @@ export class WalletController {
   static async read(req: any, res: Response): Promise<Response> {
     const { wallet } = req;
 
-    return res.status(200).json(new WalletModelResponse(wallet).getResponseModel());
+    return res.status(200).json({
+      success: true,
+      wallet: new WalletModelResponse(wallet).getResponseModel(),
+    });
   }
 
   static async update(req: any, res: Response): Promise<Response> {
@@ -45,7 +48,7 @@ export class WalletController {
     const result = await WalletController._walletDataAgent.update(_id, body, false);
 
     if (typeof result !== 'object') {
-      return res.status(400).json(new BadRequestError('update', result));
+      return res.status(400).json(new BadRequestError('update', result).toJSON());
     }
 
     return res.status(200).json({

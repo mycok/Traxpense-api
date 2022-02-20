@@ -6,7 +6,7 @@ import { createCategory, validCategoryObject } from '../category/fixtures';
 import { expect } from '..';
 
 const baseUrl = '/api/v1';
-describe('annual expense data', () => {
+describe('annual expenditure by month data', () => {
   const app = new Application();
   let userResult: any;
   let categoryResult: any;

@@ -1,5 +1,5 @@
-import { CategoryModel, ICategoryDocument, ICategoryModel } from '../../data-abstracts';
-import { BaseDataAgent } from '../../../../utils/BaseDataAgent';
+import { CategoryModel, ICategoryDocument } from '../../data-abstracts';
+import { BaseDataAgent } from '../BaseDataAgent';
 
 /**
  * TODO: consider implementing the DataRepository interface instead of extending BaseDataRepository
@@ -7,15 +7,15 @@ import { BaseDataAgent } from '../../../../utils/BaseDataAgent';
  * such as (update, delete) functionality
  */
 export class CategoryDataAgent extends BaseDataAgent<ICategoryDocument> {
-  private categoryModel: ICategoryModel;
+  // private categoryModel: ICategoryModel;
 
   constructor() {
     super(CategoryModel);
-    this.categoryModel = CategoryModel;
+    // this.categoryModel = CategoryModel;
   }
 
   async list(): Promise<ICategoryDocument[]> {
-    const results = await this.categoryModel.find({
+    const results = await this.model.find({
       createdByAdmin: true,
     });
 
@@ -23,7 +23,7 @@ export class CategoryDataAgent extends BaseDataAgent<ICategoryDocument> {
   }
 
   async listByUser(userId: string): Promise<ICategoryDocument[]> {
-    const results = await this.categoryModel.find({
+    const results = await this.model.find({
       user: userId,
     });
 

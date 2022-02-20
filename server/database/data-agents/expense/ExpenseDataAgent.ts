@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 
 import { IExpenseDocument, ExpenseModel } from '../../data-abstracts';
-import { BaseDataAgent } from '../../../../utils/BaseDataAgent';
+import { BaseDataAgent } from '../BaseDataAgent';
 
 type DateRangeSearchParams = {
   userId: string;
@@ -13,11 +13,11 @@ type DateRangeSearchParams = {
 
 // TODO: add error handling for all aggregate data handlers
 export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
-  private _expenseModel: any;
+  // private _expenseModel: any;
 
   constructor() {
     super(ExpenseModel);
-    this._expenseModel = ExpenseModel;
+    // this._expenseModel = ExpenseModel;
   }
   /**
    * Uses cursor based pagination along with a date filter to return
@@ -37,34 +37,36 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
     endDate,
     cursor,
   }: DateRangeSearchParams): Promise<IExpenseDocument[]> {
-    const firstDay = startDate && new Date(startDate).toISOString();
-    const lastDay = endDate && new Date(endDate).toISOString();
+    const user = Types.ObjectId(userId);
 
-    let query: any = { $and: [{ recordedBy: userId }] };
+    const fromDate = startDate && new Date(startDate).toISOString();
+    const toDate = endDate && new Date(endDate).toISOString();
 
-    if (firstDay && lastDay) {
+    let query: any = { $and: [{ recordedBy: user }] };
+
+    if (fromDate && toDate) {
       query = {
-        $and: [{ recordedBy: userId }, { incurredOn: { $gte: firstDay, $lte: lastDay } }],
+        $and: [{ recordedBy: user }, { incurredOn: { $gte: fromDate, $lte: toDate } }],
       };
     }
 
     if (cursor) {
       query = {
-        $and: [{ recordedBy: userId }, { incurredOn: { $lt: cursor } }],
+        $and: [{ recordedBy: user }, { incurredOn: { $lt: cursor } }],
       };
     }
 
-    if (firstDay && lastDay && cursor) {
+    if (fromDate && toDate && cursor) {
       query = {
         $and: [
-          { recordedBy: userId },
-          { incurredOn: { $gte: firstDay, $lte: lastDay } },
+          { recordedBy: user },
+          { incurredOn: { $gte: fromDate, $lte: toDate } },
           { incurredOn: { $lt: cursor } },
         ],
       };
     }
 
-    const expenses: IExpenseDocument[] = await this._expenseModel
+    const expenses: IExpenseDocument[] = await this.model
       .find(query)
       .populate('recordedBy', 'username email')
       .populate('category', '_id title')
@@ -76,8 +78,8 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
   }
 
   async getById(expId: string): Promise<IExpenseDocument | null> {
-    const result = await this._expenseModel
-      .findById(expId)
+    const result = await this.model
+      .findById(Types.ObjectId(expId))
       .populate('recordedBy')
       .populate('category', '_id title');
 
@@ -91,31 +93,33 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
    *  grouped as yesterday, today and currentMonth
    */
   async currentMonthPreview(userId: string): Promise<any> {
+    const user = Types.ObjectId(userId);
+
     const date = new Date();
     const y = date.getFullYear();
     const m = date.getMonth();
     const firstDay = new Date(y, m, 1);
     const lastDay = new Date(y, m + 1, 0);
+
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    today.setUTCHours(0, 0, 0, 0);
     const tomorrow = new Date();
-
-    tomorrow.setUTCHours(0, 0, 0, 0);
+    tomorrow.setHours(0, 0, 0, 0);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
     const yesterday = new Date();
-    yesterday.setUTCHours(0, 0, 0, 0);
+    yesterday.setHours(0, 0, 0, 0);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    const currentMonthPreviews = await this._expenseModel.aggregate([
+    const currentMonthPreviews = await this.model.aggregate([
       {
         $facet: {
           month: [
             {
               $match: {
                 incurredOn: { $gte: firstDay, $lt: lastDay },
-                recordedBy: Types.ObjectId(userId),
+                recordedBy: user,
               },
             },
             {
@@ -126,7 +130,7 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
             {
               $match: {
                 incurredOn: { $gte: today, $lt: tomorrow },
-                recordedBy: Types.ObjectId(userId),
+                recordedBy: user,
               },
             },
             {
@@ -137,7 +141,7 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
             {
               $match: {
                 incurredOn: { $gte: yesterday, $lt: today },
-                recordedBy: Types.ObjectId(userId),
+                recordedBy: user,
               },
             },
             {
@@ -151,18 +155,28 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
     return currentMonthPreviews;
   }
 
-  async expensesByCategory(userId: string): Promise<any> {
+  /**
+   * @param userId
+   * @returns
+   *  Data of the expenses per category incurred so far in the current month
+   *  grouped as average and total.
+   */
+
+  // TODO: Add option to query average expenditure per month and year.
+  async currentMonthAvgTotalExpByCategory(userId: string): Promise<any> {
+    const user = Types.ObjectId(userId);
+
     const date = new Date();
     const y = date.getFullYear();
     const m = date.getMonth();
     const firstDay = new Date(y, m, 1);
     const lastDay = new Date(y, m + 1, 0);
 
-    const categoryExpAggregates = await this._expenseModel.aggregate([
+    const currentMonthAvgTotalExpenditureByCategory = await this.model.aggregate([
       {
         $facet: {
           average: [
-            { $match: { recordedBy: Types.ObjectId(userId) } },
+            { $match: { recordedBy: user } },
             {
               $group: {
                 _id: {
@@ -186,7 +200,7 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
             {
               $match: {
                 incurredOn: { $gte: firstDay, $lte: lastDay },
-                recordedBy: Types.ObjectId(userId),
+                recordedBy: user,
               },
             },
             {
@@ -206,7 +220,7 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
       { $group: { _id: '$_id', mergedValues: { $mergeObjects: '$value' } } },
     ]);
 
-    return categoryExpAggregates;
+    return currentMonthAvgTotalExpenditureByCategory;
   }
 
   /**
@@ -216,20 +230,23 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
    * Total expenditure by date for a specific month
    */
   async scatteredPlotExpData(userId: string, period: Date): Promise<any> {
+    const user = Types.ObjectId(userId);
+
     const date = new Date(period);
     const y = date.getFullYear();
     const m = date.getMonth();
-    const firstDay = new Date(y, m, 1);
-    const lastDay = new Date(y, m + 1, 0);
+    const d = date.getDate();
+    const firstDay = new Date(y, m, d);
+    const lastDay = new Date(y, m + 1, d);
 
-    const plotData = await this._expenseModel.aggregate([
+    const plotData = await this.model.aggregate([
       {
         $match: {
           incurredOn: { $gte: firstDay, $lt: lastDay },
-          recordedBy: Types.ObjectId(userId),
+          recordedBy: user,
         },
       },
-      { $project: { x: { daysOfMonth: '$incurredOn' }, y: '$amount' } },
+      { $project: { x: { $dayOfMonth: '$incurredOn' }, y: '$amount' } },
     ]);
 
     return plotData;
@@ -243,25 +260,34 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
    * Annual total monthly expenditure
    */
   async annualExpData(userId: string, year: number): Promise<any> {
+    const user = Types.ObjectId(userId);
+
     const y = year;
     const firstDay = new Date(y, 0, 1);
     const lastDay = new Date(y, 12, 0);
 
-    const monthlyTotals = await this._expenseModel.aggregate([
+    const monthlyTotals = await this.model.aggregate([
       {
         $match: {
           incurredOn: { $gte: firstDay, $lt: lastDay },
-          recordedBy: Types.ObjectId(userId),
+          recordedBy: user,
         },
       },
       {
         $group: {
+          // Group the matched documents based on the incurredOn expense field.
           _id: { $month: '$incurredOn' },
           totalSpent: { $sum: '$amount' },
+          expCount: { $count: {} },
         },
       },
       {
-        $project: { x: '$_id', y: '$totalSpent' },
+        $project: {
+          _id: 0,
+          x: '$_id',
+          y: '$totalSpent',
+          count: '$expCount',
+        },
       },
     ]);
 
@@ -276,31 +302,40 @@ export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
    * @returns
    * Average total expenditure by category for the specified period
    */
-  async avgExpBycategory(userId: string, startDate: Date, endDate: Date): Promise<any> {
+  async totalExpBycategoryForPeriod(
+    userId: string,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<any> {
+    const user = Types.ObjectId(userId);
+
     const firstDay = new Date(startDate);
     const lastDay = new Date(endDate);
 
-    const avgerageExpByCategory = await this._expenseModel.aggregate([
+    const totalExpByCategory = await this.model.aggregate([
       {
         $match: {
           incurredOn: { $gte: firstDay, $lte: lastDay },
-          recordedBy: Types.ObjectId(userId),
+          recordedBy: user,
         },
       },
       {
         $group: {
           _id: { category: '$category' },
           totalSpent: { $sum: '$amount' },
+          expCount: { $count: {} },
         },
       },
       {
-        $group: { _id: '$_id.category', avgSpent: { $avg: '$totalSpent' } },
-      },
-      {
-        $project: { x: '$_id', y: '$avgSpent' },
+        $project: {
+          _id: 0,
+          x: '$_id.category',
+          y: '$totalSpent',
+          count: '$expCount',
+        },
       },
     ]);
 
-    return avgerageExpByCategory;
+    return totalExpByCategory;
   }
 }
