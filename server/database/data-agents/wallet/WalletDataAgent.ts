@@ -1,17 +1,18 @@
-import { IWalletDocument, WalletModel, IWalletModel } from '../../data-abstracts';
-import { BaseDataAgent } from '../../../../utils/BaseDataAgent';
+import { Types } from 'mongoose';
+import { IWalletDocument, WalletModel } from '../../data-abstracts';
+import { BaseDataAgent } from '../BaseDataAgent';
 import { handleErrorMessages } from '../../../../utils/dbErrorHandler';
 
 export class WalletDataAgent extends BaseDataAgent<IWalletDocument> {
-  private readonly _walletModel: IWalletModel;
+  // private readonly _walletModel: IWalletModel;
 
   constructor() {
     super(WalletModel);
-    this._walletModel = WalletModel;
+    // this._walletModel = WalletModel;
   }
 
   async getByOwner(ownerId: string): Promise<IWalletDocument | null> {
-    const result = await this._walletModel
+    const result = await this.model
       .findOne({ owner: ownerId })
       .populate('owner', '_id username email');
 
@@ -20,20 +21,21 @@ export class WalletDataAgent extends BaseDataAgent<IWalletDocument> {
 
   async update(
     id: string,
-    propsToUpdate: any,
+    propsToUpdate: { currentBalance: number },
     deductible = true,
   ): Promise<IWalletDocument | string> {
+    const walletId = Types.ObjectId(id);
     const updates = { ...propsToUpdate };
-    const walletToUpdate = await this._walletModel.findById(id);
+    const walletToUpdate = await this.model.findById(walletId);
 
     if (deductible) {
       updates.currentBalance = (walletToUpdate?.currentBalance as number) - updates.currentBalance;
     } else {
-      updates.currentBalance = walletToUpdate?.currentBalance + updates.currentBalance;
+      updates.currentBalance = (walletToUpdate?.currentBalance as number) + updates.currentBalance;
     }
 
-    const result = await this._walletModel
-      .findOneAndUpdate({ _id: id }, updates, {
+    const result = await this.model
+      .findByIdAndUpdate(walletId, updates, {
         omitUndefined: true,
         new: true,
         runValidators: true,

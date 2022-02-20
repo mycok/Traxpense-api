@@ -6,7 +6,7 @@ import { createCategory, validCategoryObject } from '../category/fixtures';
 import { expect } from '..';
 
 const baseUrl = '/api/v1';
-describe('average expenditure data by category', () => {
+describe('aggregated total expenditure by category for a period', () => {
   const app = new Application();
   let userResult: any;
   let categoryResult: any;
@@ -52,7 +52,7 @@ describe('average expenditure data by category', () => {
       );
       const res = await aggExpenses(
         app,
-        `${baseUrl}/expenses/category/averages/?startDate=${startDate}&endDate=${endDate}`,
+        `${baseUrl}/expenses/by/category/for-period?startDate=${startDate}&endDate=${endDate}`,
         userResult.body.token,
       );
 

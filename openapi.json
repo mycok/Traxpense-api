@@ -1176,7 +1176,7 @@
           }
         }
       },
-      "/expenses/by/category": {
+      "/expenses/by/category/averages": {
         "get": {
           "tags": [
             "expenses"
@@ -1255,7 +1255,7 @@
           }
         }
       },
-      "/expenses/category/averages": {
+      "/expenses/by/category/for-period": {
         "get": {
           "tags": [
             "expenses"
@@ -1265,8 +1265,8 @@
               "token": []
             }
           ],
-          "summary": "Average total expenditure by category for the specified period",
-          "description": "returns Average total expenditure by category for the specified period",
+          "summary": "Total expenditure by category for the specified period",
+          "description": "returns total expenditure by category for the specified period",
           "parameters": [
             {
               "name": "startDate",

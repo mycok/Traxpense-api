@@ -6,7 +6,7 @@ import { createCategory, validCategoryObject } from '../category/fixtures';
 import { expect } from '..';
 
 const baseUrl = '/api/v1';
-describe('aggregated expenses by category', () => {
+describe('aggregated total and average expenditure by category', () => {
   const app = new Application();
   let userResult: any;
   let categoryResult: any;
@@ -45,7 +45,7 @@ describe('aggregated expenses by category', () => {
     it('an aggregated expenses response should be returned', async () => {
       const res = await aggExpenses(
         app,
-        `${baseUrl}/expenses/by/category`,
+        `${baseUrl}/expenses/by/category/averages`,
         userResult.body.token,
       );
 

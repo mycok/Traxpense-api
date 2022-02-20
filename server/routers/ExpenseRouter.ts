@@ -17,8 +17,8 @@ expenseRouter
   .get(authenticate, expenseController.currentMonthPreview);
 
 expenseRouter
-  .route('/api/v1/expenses/by/category')
-  .get(authenticate, expenseController.expensesByCategory);
+  .route('/api/v1/expenses/by/category/for-period')
+  .get(authenticate, expenseController.totalExpBycategoryForPeriod);
 
 expenseRouter
   .route('/api/v1/expenses/plot')
@@ -29,8 +29,8 @@ expenseRouter
   .get(authenticate, expenseController.annualExpData);
 
 expenseRouter
-  .route('/api/v1/expenses/category/averages')
-  .get(authenticate, expenseController.avgExpBycategory);
+  .route('/api/v1/expenses/by/category/averages')
+  .get(authenticate, expenseController.currentMonthAvgTotalExpByCategory);
 
 expenseRouter
   .route('/api/v1/expenses/:expId')

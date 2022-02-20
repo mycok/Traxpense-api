@@ -6,7 +6,7 @@ import { createCategory, validCategoryObject } from '../category/fixtures';
 import { expect } from '..';
 
 const baseUrl = '/api/v1';
-describe('preview aggregated expenses', () => {
+describe('preview current month aggregated expenditure', () => {
   const app = new Application();
   let userResult: any;
   let categoryResult: any;

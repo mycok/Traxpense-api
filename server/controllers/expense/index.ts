@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { Response } from 'express';
 import { EventEmitter } from 'events';
 
@@ -29,14 +30,16 @@ class ExpenseController extends EventEmitter {
     this.update = this.update.bind(this);
     this.delete = this.delete.bind(this);
     this.currentMonthPreview = this.currentMonthPreview.bind(this);
-    this.expensesByCategory = this.expensesByCategory.bind(this);
+    this.totalExpBycategoryForPeriod = this.totalExpBycategoryForPeriod.bind(this);
     this.scatteredPlotExpData = this.scatteredPlotExpData.bind(this);
     this.annualExpData = this.annualExpData.bind(this);
-    this.avgExpBycategory = this.avgExpBycategory.bind(this);
+    this.currentMonthAvgTotalExpByCategory = this.currentMonthAvgTotalExpByCategory.bind(
+      this,
+    );
     this.getById = this.getById.bind(this);
   }
 
-  async create(req: any, res: Response): Promise<any> {
+  async create(req: any, res: Response): Promise<Response> {
     const { auth, body } = req;
     const validationResults = new Validator().validate<ExpenseRequest>(
       createExpenseSchema,
@@ -71,7 +74,7 @@ class ExpenseController extends EventEmitter {
     });
   }
 
-  async list(req: any, res: Response): Promise<any> {
+  async list(req: any, res: Response): Promise<Response> {
     let hasNextPage = false;
     const limit = 10;
     const {
@@ -100,7 +103,7 @@ class ExpenseController extends EventEmitter {
     });
   }
 
-  async read(req: any, res: Response): Promise<any> {
+  async read(req: any, res: Response): Promise<Response> {
     const { expense } = req;
 
     return res.status(200).json({
@@ -109,7 +112,7 @@ class ExpenseController extends EventEmitter {
     });
   }
 
-  async update(req: any, res: Response): Promise<any> {
+  async update(req: any, res: Response): Promise<Response> {
     const {
       expense: { _id },
       body,
@@ -138,7 +141,7 @@ class ExpenseController extends EventEmitter {
     });
   }
 
-  async delete(req: any, res: Response): Promise<any> {
+  async delete(req: any, res: Response): Promise<Response> {
     const {
       expense: { _id },
     } = req;
@@ -155,7 +158,7 @@ class ExpenseController extends EventEmitter {
     });
   }
 
-  async currentMonthPreview(req: any, res: Response): Promise<any> {
+  async currentMonthPreview(req: any, res: Response): Promise<Response> {
     const {
       auth: { _id },
     } = req;
@@ -171,20 +174,22 @@ class ExpenseController extends EventEmitter {
     });
   }
 
-  async expensesByCategory(req: any, res: Response): Promise<any> {
+  async currentMonthAvgTotalExpByCategory(req: any, res: Response): Promise<Response> {
     const {
       auth: { _id },
     } = req;
 
-    const categoryExpAggregates = await this._expenseDataAgent.expensesByCategory(_id);
+    const currentMonthAvgTotalExpenditureByCategory = await this._expenseDataAgent.currentMonthAvgTotalExpByCategory(
+      _id,
+    );
 
     return res.status(200).json({
       success: true,
-      categoryExpAggregates,
+      currentMonthAvgTotalExpenditureByCategory,
     });
   }
 
-  async scatteredPlotExpData(req: any, res: Response): Promise<any> {
+  async scatteredPlotExpData(req: any, res: Response): Promise<Response> {
     const {
       auth: { _id },
       query: { period },
@@ -198,7 +203,7 @@ class ExpenseController extends EventEmitter {
     });
   }
 
-  async annualExpData(req: any, res: Response): Promise<any> {
+  async annualExpData(req: any, res: Response): Promise<Response> {
     const {
       auth: { _id },
       query: { year },
@@ -212,13 +217,13 @@ class ExpenseController extends EventEmitter {
     });
   }
 
-  async avgExpBycategory(req: any, res: Response): Promise<any> {
+  async totalExpBycategoryForPeriod(req: any, res: Response): Promise<Response> {
     const {
       auth: { _id },
       query: { startDate, endDate },
     } = req;
 
-    const avgerageExpByCategory = await this._expenseDataAgent.avgExpBycategory(
+    const totalExpBycategory = await this._expenseDataAgent.totalExpBycategoryForPeriod(
       _id,
       startDate,
       endDate,
@@ -226,7 +231,7 @@ class ExpenseController extends EventEmitter {
 
     return res.status(200).json({
       success: true,
-      avgerageExpByCategory,
+      totalExpBycategory,
     });
   }
 

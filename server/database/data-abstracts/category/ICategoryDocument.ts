@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
+import { Types, Document } from 'mongoose';
 
-export interface ICategoryDocument extends mongoose.Document {
+export interface ICategoryDocument extends Document {
   _id: string;
   title: string;
   createdByAdmin: boolean;
-  user: mongoose.Schema.Types.ObjectId | string;
+  user: Types.ObjectId | string;
 }
