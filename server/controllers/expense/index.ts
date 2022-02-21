@@ -29,7 +29,7 @@ class ExpenseController extends EventEmitter {
     this.read = this.read.bind(this);
     this.update = this.update.bind(this);
     this.delete = this.delete.bind(this);
-    this.currentMonthPreview = this.currentMonthPreview.bind(this);
+    this.currentMonthExpPreview = this.currentMonthExpPreview.bind(this);
     this.totalExpBycategoryForPeriod = this.totalExpBycategoryForPeriod.bind(this);
     this.scatteredPlotExpData = this.scatteredPlotExpData.bind(this);
     this.annualExpData = this.annualExpData.bind(this);
@@ -158,18 +158,20 @@ class ExpenseController extends EventEmitter {
     });
   }
 
-  async currentMonthPreview(req: any, res: Response): Promise<Response> {
+  async currentMonthExpPreview(req: any, res: Response): Promise<Response> {
     const {
       auth: { _id },
     } = req;
-    const currentPreview = await this._expenseDataAgent.currentMonthPreview(_id);
+    const currentMonthExpenditurePreview = await this._expenseDataAgent.currentMonthExpPreview(
+      _id,
+    );
 
     return res.status(200).json({
       success: true,
-      expensePreview: {
-        month: currentPreview[0].month[0],
-        today: currentPreview[0].today[0],
-        yesterday: currentPreview[0].yesterday[0],
+      currentMonthExpenditurePreview: {
+        month: currentMonthExpenditurePreview[0].month[0],
+        today: currentMonthExpenditurePreview[0].today[0],
+        yesterday: currentMonthExpenditurePreview[0].yesterday[0],
       },
     });
   }

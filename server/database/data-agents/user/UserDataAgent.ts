@@ -5,11 +5,8 @@ import { handleErrorMessages } from '../../../../utils/dbErrorHandler';
 import { BaseDataAgent } from '../BaseDataAgent';
 
 export class UserDataAgent extends BaseDataAgent<IUserDocument> {
-  // private readonly _userModel: any;
-
   constructor() {
     super(UserModel);
-    // this._userModel = UserModel;
   }
 
   async pushDuplicatesToArray(items: Array<any>, obj: any): Promise<any[]> {

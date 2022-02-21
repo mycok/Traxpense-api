@@ -14,7 +14,7 @@ expenseRouter
 
 expenseRouter
   .route('/api/v1/expenses/current')
-  .get(authenticate, expenseController.currentMonthPreview);
+  .get(authenticate, expenseController.currentMonthExpPreview);
 
 expenseRouter
   .route('/api/v1/expenses/by/category/for-period')
