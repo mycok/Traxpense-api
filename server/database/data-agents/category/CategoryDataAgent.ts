@@ -7,11 +7,8 @@ import { BaseDataAgent } from '../BaseDataAgent';
  * such as (update, delete) functionality
  */
 export class CategoryDataAgent extends BaseDataAgent<ICategoryDocument> {
-  // private categoryModel: ICategoryModel;
-
   constructor() {
     super(CategoryModel);
-    // this.categoryModel = CategoryModel;
   }
 
   async list(): Promise<ICategoryDocument[]> {

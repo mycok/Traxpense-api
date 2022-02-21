@@ -4,11 +4,8 @@ import { BaseDataAgent } from '../BaseDataAgent';
 import { handleErrorMessages } from '../../../../utils/dbErrorHandler';
 
 export class WalletDataAgent extends BaseDataAgent<IWalletDocument> {
-  // private readonly _walletModel: IWalletModel;
-
   constructor() {
     super(WalletModel);
-    // this._walletModel = WalletModel;
   }
 
   async getByOwner(ownerId: string): Promise<IWalletDocument | null> {
