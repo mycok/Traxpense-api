@@ -4,14 +4,17 @@ import { EventEmitter } from 'events';
 import userSchema from '../../validation/schemas/user/create.json';
 import profileSchema from '../../validation/schemas/user/profile.json';
 import updateSchema from '../../validation/schemas/user/update.json';
-import { UserDataAgent } from '../../database/data-agents/user/UserDataAgent';
+import {
+  UserDataAgent,
+  IUserDataAgent,
+} from '../../database/data-agents/user/UserDataAgent';
 import { BadRequestError } from '../../extensions/BadRequestError';
 import { NotFoundError } from '../../extensions/NotFoundError';
 import { IUserDocument, UserModelResponse } from '../../database/data-abstracts';
 import { generateToken } from '../../../utils/authUtils';
 import { UserValidator } from '../../validation/validators/user';
 import { hashPassword, doPasswordsMatch, makeSalt } from '../../../utils/passwordUtils';
-import { WalletController } from '../wallet';
+import { walletController } from '../wallet';
 
 type UserRequest = {
   username: string;
@@ -30,9 +33,9 @@ type UserRequest = {
 };
 
 class UserController extends EventEmitter {
-  private _userDataAgent: UserDataAgent;
+  private readonly _userDataAgent: IUserDataAgent;
 
-  constructor(dataAgent: UserDataAgent) {
+  constructor(dataAgent: IUserDataAgent) {
     super();
     this._userDataAgent = dataAgent;
     this.create = this.create.bind(this);
@@ -45,7 +48,7 @@ class UserController extends EventEmitter {
     this.checkDuplicatesOnUpdate = this.checkDuplicatesOnUpdate.bind(this);
   }
 
-  async create(req: any, res: Response): Promise<any> {
+  async create(req: any, res: Response): Promise<Response> {
     const { body } = req;
     const validationResults = new UserValidator().validate<UserRequest>(
       [userSchema, profileSchema],
@@ -73,8 +76,10 @@ class UserController extends EventEmitter {
     }
 
     const token = generateToken(result._id, result.username, result.email);
+
     req.auth = result;
-    this.emit('new-user-added', req, res);
+
+    this.emit('new_user_added', req, res);
 
     return res.status(201).json({
       success: true,
@@ -83,7 +88,7 @@ class UserController extends EventEmitter {
     });
   }
 
-  async list(req: Request, res: Response): Promise<any> {
+  async list(req: Request, res: Response): Promise<Response> {
     const users: IUserDocument[] = await this._userDataAgent.list();
 
     return res.status(200).json({
@@ -96,7 +101,7 @@ class UserController extends EventEmitter {
     });
   }
 
-  async read(req: any, res: Response): Promise<any> {
+  async read(req: any, res: Response): Promise<Response> {
     const { user } = req;
 
     return res.status(200).json({
@@ -107,7 +112,7 @@ class UserController extends EventEmitter {
     });
   }
 
-  async update(req: any, res: Response): Promise<any> {
+  async update(req: any, res: Response): Promise<Response> {
     const {
       body,
       user: { _id },
@@ -135,7 +140,7 @@ class UserController extends EventEmitter {
     });
   }
 
-  async delete(req: any, res: Response): Promise<any> {
+  async delete(req: any, res: Response): Promise<Response> {
     const {
       user: { _id },
     } = req;
@@ -152,11 +157,12 @@ class UserController extends EventEmitter {
     });
   }
 
-  async passwordReset(req: any, res: Response): Promise<any> {
+  async passwordReset(req: any, res: Response): Promise<Response> {
     const {
       user,
       body: { oldPassword, newPassword },
     } = req;
+
     const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
 
     if (!doPasswordsMatch(oldPassword, user.password, user.salt)) {
@@ -177,11 +183,13 @@ class UserController extends EventEmitter {
     }
 
     const hashedPassword = hashPassword(newPassword, user.salt);
+
     const result = await this._userDataAgent.reset(user._id, hashedPassword);
 
     if (typeof result === 'string') {
       return res.status(400).json(new BadRequestError('password-reset', result));
     }
+
     return res.status(200).json({ success: true });
   }
 
@@ -206,6 +214,7 @@ class UserController extends EventEmitter {
         .status(404)
         .json(new NotFoundError('getById', 'User not found').toJSON());
     }
+
     req.user = new UserModelResponse(user).getFullModelResponse();
 
     return next();
@@ -226,7 +235,9 @@ class UserController extends EventEmitter {
     next: Function,
   ): Promise<any> {
     const { body } = req;
+
     const propertiesToUpdate = Object.keys(body);
+
     const duplicates: Array<any> = await this._userDataAgent.pushDuplicatesToArray(
       propertiesToUpdate,
       body,
@@ -244,4 +255,4 @@ class UserController extends EventEmitter {
 }
 
 export const userController = new UserController(new UserDataAgent());
-userController.on('new-user-added', WalletController.create);
+userController.on('new_user_added', walletController.create);

@@ -1,11 +1,31 @@
-import { Types } from 'mongoose';
-import { IWalletDocument, WalletModel } from '../../data-abstracts';
-import { BaseDataAgent } from '../BaseDataAgent';
+import { Types, CreateQuery, UpdateQuery } from 'mongoose';
+import { IWalletDocument } from '../../data-abstracts';
 import { handleErrorMessages } from '../../../../utils/dbErrorHandler';
+import { IWalletModel } from '../../data-abstracts/wallet/WalletModel';
 
-export class WalletDataAgent extends BaseDataAgent<IWalletDocument> {
-  constructor() {
-    super(WalletModel);
+export interface IWalletDataAgent {
+  create(data: CreateQuery<IWalletDocument>): Promise<IWalletDocument | string>;
+  getByOwner(ownerId: string): Promise<IWalletDocument | null>;
+  update(
+    id: string,
+    updateProps: UpdateQuery<IWalletDocument>,
+    deductible: boolean
+  ): Promise<IWalletDocument | string>;
+}
+
+export class WalletDataAgent implements IWalletDataAgent {
+  private readonly model: IWalletModel;
+
+  constructor(model: IWalletModel) {
+    this.model = model;
+  }
+
+  async create(data: CreateQuery<IWalletDocument>): Promise<IWalletDocument | string> {
+    const result = await this.model
+      .create(data)
+      .catch((err: any) => handleErrorMessages(err));
+
+    return result;
   }
 
   async getByOwner(ownerId: string): Promise<IWalletDocument | null> {
