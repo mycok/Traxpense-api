@@ -13,6 +13,7 @@ services:
       depends_on:
         - mongo
       env_file: .env.prod
+
     mongo:
       container_name: mongo
       image: mongo:latest

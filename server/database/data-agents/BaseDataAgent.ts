@@ -2,14 +2,13 @@ import {
   Model, Document, CreateQuery, UpdateQuery, Types,
 } from 'mongoose';
 
-import { DataAgent } from './DataAgent';
 import { handleErrorMessages } from '../../../utils/dbErrorHandler';
+import { IDataAgent } from './DataAgent';
 
-export class BaseDataAgent<T extends Document> extends DataAgent<T> {
+export class BaseDataAgent<T extends Document> implements IDataAgent<T> {
   protected readonly model: Model<T>;
 
   constructor(model: Model<T>) {
-    super();
     this.model = model;
   }
 
@@ -33,7 +32,11 @@ export class BaseDataAgent<T extends Document> extends DataAgent<T> {
     return result;
   }
 
-  async update(id: string, propsToUpdate: UpdateQuery<T>): Promise<T | string> {
+  async update(
+    id: string,
+    propsToUpdate: UpdateQuery<T>,
+    ...otherArgs: any
+  ): Promise<T | string> {
     const result = await this.model
       .findByIdAndUpdate({ _id: Types.ObjectId(id) }, propsToUpdate, {
         omitUndefined: true,

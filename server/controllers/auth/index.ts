@@ -10,15 +10,15 @@ import { UserModelResponse } from '../../database/data-abstracts/user/UserModelR
 import { handleErrorMessages } from '../../../utils/dbErrorHandler';
 import { AuthValidator } from '../../validation/validators/auth/index';
 
-interface ISigninRequest {
+type SigninRequest = {
   email: string;
   password: string;
-}
+};
 
 export class AuthController {
-  static async signin(req: Request, res: Response): Promise<any> {
+  static async signin(req: Request, res: Response): Promise<Response> {
     const { body } = req;
-    const validationResults = new AuthValidator().validate<ISigninRequest>(
+    const validationResults = new AuthValidator().validate<SigninRequest>(
       authSchema,
       'signin',
       body,

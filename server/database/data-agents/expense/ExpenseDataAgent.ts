@@ -3,6 +3,7 @@ import { Types } from 'mongoose';
 
 import { IExpenseDocument, ExpenseModel } from '../../data-abstracts';
 import { BaseDataAgent } from '../BaseDataAgent';
+import { IDataAgent } from '../DataAgent';
 
 type DateRangeSearchParams = {
   userId: string;
@@ -59,6 +60,24 @@ type CurrentMonthAvgTotalExpByCategoryAggregate = {
 type CurrentMonthAvgTotalExpByCategoryReturnType =
   | CurrentMonthAvgTotalExpByCategoryAggregate[]
   | [];
+
+export interface IExpenseDataAgent extends IDataAgent<IExpenseDocument> {
+  currentMonthExpPreview(userId: string): Promise<CurrentMonthExpPreviewReturnType>;
+  currentMonthAvgTotalExpByCategory(
+    userId: string
+  ): Promise<CurrentMonthAvgTotalExpByCategoryReturnType>;
+  scatteredPlotExpData(
+    userId: string,
+    period: Date
+  ): Promise<ScatteredPlotExpDataReturnType>;
+  annualExpData(userId: string, year: number): Promise<AnnualExpDataReturnType>;
+  totalExpBycategoryForPeriod(
+    userId: string,
+    startDate: Date,
+    endDate: Date
+  ): Promise<TotalExpBycategoryForPeriodReturnType>;
+}
+
 // TODO: add error handling for all aggregate data handlers
 export class ExpenseDataAgent extends BaseDataAgent<IExpenseDocument> {
   constructor() {

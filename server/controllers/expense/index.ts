@@ -6,10 +6,13 @@ import createExpenseSchema from '../../validation/schemas/expense/create.json';
 import updateExpenseSchema from '../../validation/schemas/expense/update.json';
 import { Validator } from '../../validation/validators';
 import { BadRequestError } from '../../extensions/BadRequestError';
-import { ExpenseDataAgent } from '../../database/data-agents/expense/ExpenseDataAgent';
+import {
+  ExpenseDataAgent,
+  IExpenseDataAgent,
+} from '../../database/data-agents/expense/ExpenseDataAgent';
 import { IExpenseDocument, ExpenseModelResponse } from '../../database/data-abstracts';
 import { NotFoundError } from '../../extensions/NotFoundError';
-import { WalletController } from '../wallet';
+import { walletController } from '../wallet';
 
 type ExpenseRequest = {
   title: string;
@@ -19,9 +22,9 @@ type ExpenseRequest = {
 };
 
 class ExpenseController extends EventEmitter {
-  private _expenseDataAgent: ExpenseDataAgent;
+  private readonly _expenseDataAgent: IExpenseDataAgent;
 
-  constructor(dataAgent: ExpenseDataAgent) {
+  constructor(dataAgent: IExpenseDataAgent) {
     super();
     this._expenseDataAgent = dataAgent;
     this.create = this.create.bind(this);
@@ -41,6 +44,7 @@ class ExpenseController extends EventEmitter {
 
   async create(req: any, res: Response): Promise<Response> {
     const { auth, body } = req;
+
     const validationResults = new Validator().validate<ExpenseRequest>(
       createExpenseSchema,
       'expense',
@@ -66,7 +70,8 @@ class ExpenseController extends EventEmitter {
     }
 
     req.expense = result;
-    this.emit('new-expense-added', req, res);
+
+    this.emit('new_expense_added', req, res);
 
     return res.status(201).json({
       success: true,
@@ -76,7 +81,9 @@ class ExpenseController extends EventEmitter {
 
   async list(req: any, res: Response): Promise<Response> {
     let hasNextPage = false;
+
     const limit = 10;
+
     const {
       auth,
       query: { cursor, startDate, endDate },
@@ -94,6 +101,7 @@ class ExpenseController extends EventEmitter {
       hasNextPage = true;
       expenses = expenses.slice(0, -1);
     }
+
     return res.status(200).json({
       success: true,
       count: expenses.length,
@@ -117,6 +125,7 @@ class ExpenseController extends EventEmitter {
       expense: { _id },
       body,
     } = req;
+
     const validationResults = new Validator().validate<ExpenseRequest>(
       updateExpenseSchema,
       'expense',
@@ -162,6 +171,7 @@ class ExpenseController extends EventEmitter {
     const {
       auth: { _id },
     } = req;
+
     const currentMonthExpenditurePreview = await this._expenseDataAgent.currentMonthExpPreview(
       _id,
     );
@@ -256,6 +266,7 @@ class ExpenseController extends EventEmitter {
         .status(404)
         .json(new NotFoundError('getById', 'Expense not found').toJSON());
     }
+
     req.expense = expense;
 
     return next();
@@ -263,4 +274,4 @@ class ExpenseController extends EventEmitter {
 }
 
 export const expenseController = new ExpenseController(new ExpenseDataAgent());
-expenseController.on('new-expense-added', WalletController.updateOnNewExpense);
+expenseController.on('new_expense_added', walletController.updateOnNewExpense);

@@ -1,6 +1,10 @@
 import { CategoryModel, ICategoryDocument } from '../../data-abstracts';
 import { BaseDataAgent } from '../BaseDataAgent';
+import { IDataAgent } from '../DataAgent';
 
+export interface ICategoryDataAgent extends IDataAgent<ICategoryDocument> {
+  listByUser(userId: string): Promise<ICategoryDocument[]>;
+}
 /**
  * TODO: consider implementing the DataRepository interface instead of extending BaseDataRepository
  * since that means we are inheriting functionality that we don't need at the moment
@@ -11,7 +15,7 @@ export class CategoryDataAgent extends BaseDataAgent<ICategoryDocument> {
     super(CategoryModel);
   }
 
-  async list(): Promise<ICategoryDocument[]> {
+  async list(...args: any): Promise<ICategoryDocument[]> {
     const results = await this.model.find({
       createdByAdmin: true,
     });
