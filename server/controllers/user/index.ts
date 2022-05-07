@@ -79,7 +79,7 @@ class UserController extends EventEmitter {
 
     req.auth = result;
 
-    this.emit('new_user_added', req, res);
+    this.emit('new_user_added', req);
 
     return res.status(201).json({
       success: true,
