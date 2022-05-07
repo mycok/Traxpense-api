@@ -20,11 +20,11 @@ class WalletController {
     this.create = this.create.bind(this);
     this.read = this.read.bind(this);
     this.update = this.update.bind(this);
-    this.updateOnNewExpense = this.updateOnNewExpense.bind(this);
+    this.updateOnExpenseChange = this.updateOnExpenseChange.bind(this);
     this.getById = this.getById.bind(this);
   }
 
-  async create(req: any, res: Response) {
+  async create(req: any) {
     const { auth } = req;
     const walletRequest: any = { owner: auth._id };
 
@@ -43,13 +43,13 @@ class WalletController {
   async update(req: any, res: Response): Promise<Response> {
     const {
       wallet: { _id },
-      body,
+      body: { amount },
     } = req;
 
     const validationResults = new Validator().validate<IWalletDocument>(
       walletUpdateSchema,
       'wallet',
-      body,
+      amount,
     );
 
     if (typeof validationResults === 'string') {
@@ -58,7 +58,7 @@ class WalletController {
         .json(new BadRequestError('create-expense', validationResults).toJSON());
     }
 
-    const result = await this._walletDataAgent.update(_id, body, false);
+    const result = await this._walletDataAgent.update(_id, amount, false);
 
     if (typeof result !== 'object') {
       return res.status(400).json(new BadRequestError('update', result).toJSON());
@@ -70,14 +70,14 @@ class WalletController {
     });
   }
 
-  async updateOnNewExpense(req: any, Res: Response) {
-    const { auth: _id, expense } = req;
+  async updateOnExpenseChange(params: any) {
+    const { auth: _id, expense } = params.req;
 
     const wallet = await this._walletDataAgent.getByOwner(_id);
     await this._walletDataAgent.update(
       wallet?._id as string,
-      { currentBalance: expense.amount },
-      true,
+      expense.amount,
+      params?.didAddExpense,
     );
   }
 

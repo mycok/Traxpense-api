@@ -1,4 +1,4 @@
-import { Types, CreateQuery, UpdateQuery } from 'mongoose';
+import { Types, CreateQuery } from 'mongoose';
 import { IWalletDocument } from '../../data-abstracts';
 import { handleErrorMessages } from '../../../../utils/dbErrorHandler';
 import { IWalletModel } from '../../data-abstracts/wallet/WalletModel';
@@ -8,8 +8,8 @@ export interface IWalletDataAgent {
   getByOwner(ownerId: string): Promise<IWalletDocument | null>;
   update(
     id: string,
-    updateProps: UpdateQuery<IWalletDocument>,
-    deductible: boolean
+    amount: number,
+    didAddExpense?: boolean
   ): Promise<IWalletDocument | string>;
 }
 
@@ -38,15 +38,16 @@ export class WalletDataAgent implements IWalletDataAgent {
 
   async update(
     id: string,
-    propsToUpdate: { currentBalance: number },
-    deductible = true,
+    amount: number,
+    didAddExpense?: boolean,
   ): Promise<IWalletDocument | string> {
     const walletId = Types.ObjectId(id);
-    const updates = { ...propsToUpdate };
+    const updates = { currentBalance: amount };
     const walletToUpdate = await this.model.findById(walletId);
 
-    if (deductible) {
+    if (didAddExpense) {
       updates.currentBalance = (walletToUpdate?.currentBalance as number) - updates.currentBalance;
+      // TODO: Add functionality to increment walletToUpdate.totalSpent.
     } else {
       updates.currentBalance = (walletToUpdate?.currentBalance as number) + updates.currentBalance;
     }

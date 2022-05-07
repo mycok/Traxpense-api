@@ -71,7 +71,8 @@ class ExpenseController extends EventEmitter {
 
     req.expense = result;
 
-    this.emit('new_expense_added', req, res);
+    const eventParams = { req, didAddExpense: true };
+    this.emit('new_expense_added', eventParams);
 
     return res.status(201).json({
       success: true,
@@ -160,6 +161,9 @@ class ExpenseController extends EventEmitter {
     if (typeof deletedResponse === 'string') {
       return res.status(400).json(new BadRequestError('delete', deletedResponse));
     }
+
+    const eventParams = { req };
+    this.emit('expense_deleted', eventParams);
 
     return res.status(200).json({
       success: true,
@@ -274,4 +278,6 @@ class ExpenseController extends EventEmitter {
 }
 
 export const expenseController = new ExpenseController(new ExpenseDataAgent());
-expenseController.on('new_expense_added', walletController.updateOnNewExpense);
+
+expenseController.on('new_expense_added', walletController.updateOnExpenseChange);
+expenseController.on('expense_deleted', walletController.updateOnExpenseChange);
