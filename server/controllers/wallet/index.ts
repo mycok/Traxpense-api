@@ -43,22 +43,24 @@ class WalletController {
   async update(req: any, res: Response): Promise<Response> {
     const {
       wallet: { _id },
-      body: { amount },
+      body: { currentBalance },
     } = req;
 
     const validationResults = new Validator().validate<IWalletDocument>(
       walletUpdateSchema,
       'wallet',
-      amount,
+      { ...currentBalance },
     );
 
     if (typeof validationResults === 'string') {
       return res
         .status(400)
-        .json(new BadRequestError('create-expense', validationResults).toJSON());
+        .json(new BadRequestError('update', validationResults).toJSON());
     }
 
-    const result = await this._walletDataAgent.update(_id, amount, false);
+    const result = await this._walletDataAgent.update(_id, currentBalance, undefined, {
+      shouldDeductBalance: req.body.shouldDeductBalance,
+    });
 
     if (typeof result !== 'object') {
       return res.status(400).json(new BadRequestError('update', result).toJSON());
@@ -78,6 +80,7 @@ class WalletController {
       wallet?._id as string,
       expense.amount,
       params?.didAddExpense,
+      params?.expenseOrWalletUpdate,
     );
   }
 
@@ -90,9 +93,7 @@ class WalletController {
     const wallet = await this._walletDataAgent.getByOwner(ownerId);
 
     if (!wallet) {
-      return res
-        .status(404)
-        .json(new NotFoundError('getByOwner', 'Wallet not found').toJSON());
+      return res.status(404).json(new NotFoundError('get', 'Wallet not found').toJSON());
     }
     req.wallet = wallet;
 

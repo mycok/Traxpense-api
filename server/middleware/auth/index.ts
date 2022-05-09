@@ -13,9 +13,10 @@ function verifyToken(req: any, res: any, token: string, next: Function) {
         message: 'Invalid token signature',
       });
     }
+
     return res.status(500).json({
       success: false,
-      message: err.message,
+      message: err instanceof Error ? err.message : 'An error occurred!',
     });
   }
 }

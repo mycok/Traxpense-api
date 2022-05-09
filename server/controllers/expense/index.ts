@@ -122,10 +122,7 @@ class ExpenseController extends EventEmitter {
   }
 
   async update(req: any, res: Response): Promise<Response> {
-    const {
-      expense: { _id },
-      body,
-    } = req;
+    const { expense, body } = req;
 
     const validationResults = new Validator().validate<ExpenseRequest>(
       updateExpenseSchema,
@@ -139,10 +136,29 @@ class ExpenseController extends EventEmitter {
         .json(new BadRequestError('create-expense', validationResults).toJSON());
     }
 
-    const result = await this._expenseDataAgent.update(_id, body);
+    const result = await this._expenseDataAgent.update(expense._id, body);
 
     if (typeof result !== 'object') {
       return res.status(400).json(new BadRequestError('update', result));
+    }
+
+    // Only emit this event if the expense amount has been updated.
+    if (expense.amount !== result.amount) {
+      const adjustedAmount = Math.abs(expense.amount - result.amount);
+
+      const eventParams = {
+        req: {
+          auth: req.auth,
+          expense: { ...result, amount: adjustedAmount },
+        },
+        expenseOrWalletUpdate: { shouldDeductBalance: true },
+      };
+
+      if (expense.amount > result.amount) {
+        eventParams.expenseOrWalletUpdate = { shouldDeductBalance: false };
+      }
+
+      this.emit('expense_amount_updated', eventParams);
     }
 
     return res.status(200).json({
@@ -281,3 +297,4 @@ export const expenseController = new ExpenseController(new ExpenseDataAgent());
 
 expenseController.on('new_expense_added', walletController.updateOnExpenseChange);
 expenseController.on('expense_deleted', walletController.updateOnExpenseChange);
+expenseController.on('expense_amount_updated', walletController.updateOnExpenseChange);
