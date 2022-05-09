@@ -166,9 +166,7 @@ class UserController extends EventEmitter {
     const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
 
     if (!doPasswordsMatch(oldPassword, user.password, user.salt)) {
-      return res
-        .status(400)
-        .json(new BadRequestError('password-reset', "Passwords don't match"));
+      return res.status(400).json(new BadRequestError('reset', "Passwords don't match"));
     }
 
     if (!re.test(newPassword)) {
@@ -176,7 +174,7 @@ class UserController extends EventEmitter {
         .status(400)
         .json(
           new BadRequestError(
-            'password-reset',
+            'reset',
             'A password must contain a minimum of 8 characters including atleast one an uppercase, lowercase, number and a special character!',
           ),
         );
@@ -187,7 +185,7 @@ class UserController extends EventEmitter {
     const result = await this._userDataAgent.reset(user._id, hashedPassword);
 
     if (typeof result === 'string') {
-      return res.status(400).json(new BadRequestError('password-reset', result));
+      return res.status(400).json(new BadRequestError('reset', result));
     }
 
     return res.status(200).json({ success: true });

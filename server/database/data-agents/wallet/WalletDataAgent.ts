@@ -9,7 +9,8 @@ export interface IWalletDataAgent {
   update(
     id: string,
     amount: number,
-    didAddExpense?: boolean
+    didAddExpense?: boolean,
+    expenseOrWalletUpdate?: { shouldDeductBalance: boolean }
   ): Promise<IWalletDocument | string>;
 }
 
@@ -40,20 +41,29 @@ export class WalletDataAgent implements IWalletDataAgent {
     id: string,
     amount: number,
     didAddExpense?: boolean,
+    expenseOrWalletUpdate?: { shouldDeductBalance: boolean },
   ): Promise<IWalletDocument | string> {
     const walletId = Types.ObjectId(id);
-    const updates = { currentBalance: amount };
+    const update = { currentBalance: amount };
     const walletToUpdate = await this.model.findById(walletId);
 
     if (didAddExpense) {
-      updates.currentBalance = (walletToUpdate?.currentBalance as number) - updates.currentBalance;
+      update.currentBalance = (walletToUpdate?.currentBalance as number) - update.currentBalance;
       // TODO: Add functionality to increment walletToUpdate.totalSpent.
+    } else if (expenseOrWalletUpdate) {
+      // For direct wallet and expense amount update cases.
+      if (expenseOrWalletUpdate.shouldDeductBalance) {
+        update.currentBalance = (walletToUpdate?.currentBalance as number) - update.currentBalance;
+      } else {
+        update.currentBalance = (walletToUpdate?.currentBalance as number) + update.currentBalance;
+      }
     } else {
-      updates.currentBalance = (walletToUpdate?.currentBalance as number) + updates.currentBalance;
+      // For expense deletion cases.
+      update.currentBalance = (walletToUpdate?.currentBalance as number) + update.currentBalance;
     }
 
     const result = await this.model
-      .findByIdAndUpdate(walletId, updates, {
+      .findByIdAndUpdate(walletId, update, {
         omitUndefined: true,
         new: true,
         runValidators: true,
